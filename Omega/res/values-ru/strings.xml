@@ -218,7 +218,7 @@
     <string name="title__theme_blur_radius">Интенсивность размытия</string>
     <string name="title__theme_blur">Размытие</string>
     <string name="title__theme_accent_color">Цвет акцента</string>
-    <string name="msg_missing_usage_access">Включите доступ к использованию для <xliff:g example="My App" id="name"> %1$s </xliff:g>, чтобы показать предложения приложений</string>
+    <string name="msg_missing_usage_access">Включите доступ к использованию для <xliff:g example="My App" id="name">%1$s</xliff:g>, чтобы показать предложения приложений</string>
     <string name="needs_usage_access">Требуется доступ к использованию</string>
     <string name="hide_app_selected">Скрытые приложения (%1$d)</string>
     <plurals name="hidden_apps_count">
@@ -266,7 +266,7 @@
     <string name="title__dock_show_arrow">Показать стрелку</string>
     <string name="title__dock_hotseat_icons">Количество иконок</string>
     <string name="title__dock_hide_labels">Скрыть ярлыки</string>
-    <string name="title__dock_hide">Скрыть панель быстрого доступа</string>
+    <string name="title__dock_hide">Панель быстрого доступа включена</string>
     <string name="title_dock_background_color">Цвет фона</string>
     <string name="title_dock_fill">Показать фон</string>
     <string name="title__dock_scale">Высота панели быстрого доступа</string>
@@ -420,7 +420,7 @@
     <string name="title__search_bubble_searchbar">Показать два пузырька</string>
     <string name="pref_category__dash">Панель</string>
     <string name="title_search_contacts">Поиск контактов</string>
-    <string name="title__feed">Новости</string>
+    <string name="title__feed">Лента новостей</string>
     <string name="selected_apps">Выбранные приложения (%1$d)</string>
     <string name="app_reset">Сбросить выбор</string>
     <string name="default_city">Сан-Сальвадор, СВ</string>
@@ -509,7 +509,7 @@
     <string name="color_wallpaper_tertiary">Третичные обои</string>
     <string name="title_drawer_all_apps">Все</string>
     <string name="title_drawer_horizontal">Горизонтально</string>
-    <string name="title_drawer_categorized">Упорядоченно</string>
+    <string name="title_drawer_categorized">Вертикально по категориям</string>
     <string name="title_smartspace_background">Показывать изменённый фон</string>
     <string name="web_search_provider">Поисковая система для сети</string>
     <string name="search_provider">Поисковик</string>
@@ -521,5 +521,43 @@
     <string name="add_search_provider">Добавить поисковик</string>
     <string name="edit_search_provider">Изменить поисковик</string>
     <string name="title_search_providers">Поисковики</string>
-    <string name="title_drawer_layout_categories">Категории компоновки</string>
+    <string name="title_drawer_layout_categories">Управление категориями</string>
+    <string name="hotseat_prediction_content_description">Спрогнозированное приложение: <xliff:g id="title" example="Chrome">%1$s</xliff:g></string>
+    <string name="hotseat_tip_gaps_filled">Предложения по приложениям добавлены в пустое пространство</string>
+    <string name="title_app_suggestions">Рекомендации по приложениям</string>
+    <string name="title_desktop_cycle_scrolling">Цикличное пролистывание</string>
+    <string name="folder_icon_shape">Форма иконки папки</string>
+    <string name="title_manage_tabs">Управление вкладками</string>
+    <string name="title_enable_folders">Включить папки в выдвижной панели</string>
+    <string name="title_manage_folders">Управление папками</string>
+    <string name="summary_manage_tabs">Создать или изменить вкладки</string>
+    <string name="summary_manage_folders">Создать или изменить папки</string>
+    <string name="title_drawer_tabs">Горизонтальные вкладки</string>
+    <string name="category_art_and_design">Дизайн</string>
+    <string name="category_business_and_productivity">Продуктивность</string>
+    <string name="category_communication">Коммуникация</string>
+    <string name="category_entertainment">Развлечения</string>
+    <string name="category_game">Игры</string>
+    <string name="category_health_and_fitness">Фитнес</string>
+    <string name="category_lifestyle">Стиль жизни</string>
+    <string name="category_knowledge_and_reference">Образование</string>
+    <string name="category_music">Музыка</string>
+    <string name="category_news">Новости</string>
+    <string name="category_personalization">Персонализация</string>
+    <string name="category_tools">Инструменты</string>
+    <string name="category_travel_and_navigation">Навигация</string>
+    <string name="trust_apps_unlock">Разблокировать</string>
+    <string name="trust_apps_message">Для доступа к защищенным приложениям требуется аутентификация</string>
+    <string name="title_show_icon_shadow">Показывать тень от иконки</string>
+    <string name="summary_show_icon_shadow">Показывать тень от не адаптированных иконок.</string>
+    <string name="title_enable_feed">Включить ленту новостей</string>
+    <string name="folder_full_screen">Открывать папку на весь экран</string>
+    <string name="backup_create">Создать бекап</string>
+    <string name="backup_restore">Восстановить из бекапа</string>
+    <string name="backup_databases">Базы данных</string>
+    <string name="backup_created">Бекап создан</string>
+    <string name="backup_manage_storage_permission_title">Требуется разрешение на доступ ко всем файлам</string>
+    <string name="backup_manage_storage_permission_summary">Перед тем как создавать бекапы, выдайте разрешение на доступ к внешнему хранилищу. Приложение автоматически обновит это состояние, когда вы вернетесь сюда из настроек.</string>
+    <string name="backup_grant_storage_permission">Выдать доступ к хранилищу</string>
+    <string name="title__about_acknowledgement">Благодарности</string>
 </resources>
