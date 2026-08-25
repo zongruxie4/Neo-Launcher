@@ -584,4 +584,6 @@
     <string name="pref_title_general">Generale</string>
     <string name="permission_wallpaper_title">Accesso allo sfondo</string>
     <string name="permission_wallpaper_message">Neo Launcher necessita dell\'accesso allo sfondo per applicare gli effetti di sfocatura. Senza questa autorizzazione, lo sfondo sfocato verrà disabilitato.</string>
+    <string name="permission_grant">Concedi</string>
+    <string name="title_dock_bottom_padding">Margine inferiore barra app</string>
 </resources>
