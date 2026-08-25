@@ -392,7 +392,7 @@
     <string name="battery_low">Batterijniveau laag</string>
     <string name="battery_charging_percentage_charging_time">%1$d%% — Vol in %2$s</string>
     <string name="n_percent">%1$d%%</string>
-    <string name="event_provider_missing_notification_access">Schakel meldingen van <xliff:g example="My App" id="name">“%2$s” in om </xliff:g><xliff:g example="My Provider" id="providerName">“%1$s”</xliff:g> te gebruiken.</string>
+    <string name="event_provider_missing_notification_access">Schakel meldingen van <xliff:g example="My App" id="name">“%2$s” in om </xliff:g><xliff:g example="My Provider" id="providerName">“%1$s”</xliff:g> te gebruiken</string>
     <string name="event_provider_missing_notification_dots">Schakel de meldingsstippen in om <xliff:g example="My Provider" id="providerName">“%1$s”</xliff:g> te gebruiken.</string>
     <string name="permission_iplocate_twilight_explanation">Toegang verlenen tot je geschatte locatie? Dit maakt een nauwkeuriger berekening van het daglicht mogelijk.</string>
     <string name="allow">Toestaan</string>
@@ -556,4 +556,17 @@
     <string name="title_enable_folders">Mappen in lade inschakelen</string>
     <string name="title_manage_folders">Mappen beheren</string>
     <string name="summary_manage_folders">Mappen maken of bewerken</string>
+    <string name="title_general_folder">Map</string>
+    <string name="set_as_home_screen">Instellen als startscherm</string>
+    <string name="default_home_screen">Startscherm</string>
+    <string name="home_screen_set_toast">Startscherm ingesteld</string>
+    <string name="remove_page">Pagina verwijderen</string>
+    <string name="move_page_left">Pagina naar links verplaatsen</string>
+    <string name="move_page_right">Pagina naar rechts verplaatsen</string>
+    <string name="pref_title_folder">Mappen aanpassen</string>
+    <string name="pref_title_general">Algemeen</string>
+    <string name="title_dock_bottom_padding">Opvulling onder dok</string>
+    <string name="permission_grant">Verlenen</string>
+    <string name="permission_wallpaper_title">Achtergrondtoegang</string>
+    <string name="permission_wallpaper_message">Neo Launcher heeft toegang tot je achtergrondafbeelding nodig om vervagingseffecten toe te passen. Zonder deze toestemming wordt de vervaagde achtergrond uitgeschakeld.</string>
 </resources>
