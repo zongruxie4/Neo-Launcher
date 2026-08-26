@@ -573,4 +573,15 @@
     <string name="title_enable_folders">Abilita cartelle nel cassetto</string>
     <string name="title_manage_folders">Gestisci cartelle</string>
     <string name="summary_manage_folders">Crea o modifica cartelle</string>
+    <string name="title_general_folder">Cartella</string>
+    <string name="set_as_home_screen">Imposta come schermata Home</string>
+    <string name="default_home_screen">Schermata Home</string>
+    <string name="home_screen_set_toast">Impostazione schermata Home</string>
+    <string name="remove_page">Rimuovi pagina</string>
+    <string name="move_page_left">Sposta pagina a sinistra</string>
+    <string name="move_page_right">Sposta pagina a destra</string>
+    <string name="pref_title_folder">Personalizz cartelle</string>
+    <string name="pref_title_general">Generale</string>
+    <string name="permission_wallpaper_title">Accesso allo sfondo</string>
+    <string name="permission_wallpaper_message">Neo Launcher necessita dell\'accesso allo sfondo per applicare gli effetti di sfocatura. Senza questa autorizzazione, lo sfondo sfocato verrà disabilitato.</string>
 </resources>
