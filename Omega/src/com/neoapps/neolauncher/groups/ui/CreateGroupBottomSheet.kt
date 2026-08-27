@@ -73,7 +73,6 @@ import com.neoapps.neolauncher.groups.category.FlowerpotTabs.Companion.KEY_FLOWE
 import com.neoapps.neolauncher.preferences.NeoPrefs
 import com.neoapps.neolauncher.theme.AccentColorOption
 import com.neoapps.neolauncher.util.Config
-import kotlinx.coroutines.launch
 
 @Composable
 fun CreateGroupBottomSheet(
@@ -324,43 +323,41 @@ fun CreateGroupBottomSheet(
                     cornerRadius = cornerRadius,
                     textId = R.string.tab_bottom_sheet_save,
                     onClick = {
-                        coroutineScope.launch {
-                            (config[AppGroups.KEY_TITLE] as? AppGroups.StringCustomization)?.value =
-                                title
-                            if (category != AppGroupsManager.Category.FLOWERPOT) {
-                                (config[AppGroups.KEY_HIDE_FROM_ALL_APPS] as? AppGroups.BooleanCustomization)?.value =
-                                    isHidden
-                                (config[AppGroups.KEY_ITEMS] as? AppGroups.ComponentsCustomization)?.value =
-                                    selectedApps.toMutableSet()
-                            } else {
-                                (config[KEY_FLOWERPOT] as? AppGroups.StringCustomization)?.value =
-                                    selectedCategory
-                            }
-                            if (category != AppGroupsManager.Category.FOLDER) {
-                                (config[AppGroups.KEY_COLOR] as? AppGroups.StringCustomization)?.value =
-                                    color
-                            }
-                            group.customizations.applyFrom(config)
-                            group.title = title
-                            when (category) {
-                                AppGroupsManager.Category.FOLDER -> {
-                                    prefs.drawerFolders.apply {
-                                        addGroup(group as DrawerFolders.Folder)
-                                        saveToJson()
-                                    }
+                        (config[AppGroups.KEY_TITLE] as? AppGroups.StringCustomization)?.value =
+                            title
+                        if (category != AppGroupsManager.Category.FLOWERPOT) {
+                            (config[AppGroups.KEY_HIDE_FROM_ALL_APPS] as? AppGroups.BooleanCustomization)?.value =
+                                isHidden
+                            (config[AppGroups.KEY_ITEMS] as? AppGroups.ComponentsCustomization)?.value =
+                                selectedApps.toMutableSet()
+                        } else {
+                            (config[KEY_FLOWERPOT] as? AppGroups.StringCustomization)?.value =
+                                selectedCategory
+                        }
+                        if (category != AppGroupsManager.Category.FOLDER) {
+                            (config[AppGroups.KEY_COLOR] as? AppGroups.StringCustomization)?.value =
+                                color
+                        }
+                        group.customizations.applyFrom(config)
+                        group.title = title
+                        when (category) {
+                            AppGroupsManager.Category.FOLDER -> {
+                                prefs.drawerFolders.apply {
+                                    addGroup(group as DrawerFolders.Folder)
+                                    saveToJson()
                                 }
-
-                                AppGroupsManager.Category.TAB,
-                                AppGroupsManager.Category.FLOWERPOT,
-                                    -> {
-                                    prefs.drawerTabs.apply {
-                                        addGroup(group as DrawerTabs.Tab)
-                                        saveToJson()
-                                    }
-                                }
-
-                                else -> {}
                             }
+
+                            AppGroupsManager.Category.TAB,
+                            AppGroupsManager.Category.FLOWERPOT,
+                                -> {
+                                prefs.drawerTabs.apply {
+                                    addGroup(group as DrawerTabs.Tab)
+                                    saveToJson()
+                                }
+                            }
+
+                            else -> {}
                         }
                         onClose(Config.BS_SELECT_TAB_TYPE)
                     }
