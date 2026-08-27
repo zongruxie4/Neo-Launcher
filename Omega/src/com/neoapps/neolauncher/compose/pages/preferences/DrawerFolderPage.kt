@@ -128,7 +128,7 @@ fun DrawerFolderPage() {
             when (sheetChanger) {
                 Config.BS_CREATE_GROUP -> {
                     CreateGroupBottomSheet(category = AppGroupsManager.Category.FOLDER) {
-                        sheetChanger = Config.BS_CREATE_GROUP
+                        sheetChanger = Config.BS_NONE
                         coroutineScope.launch {
                             scaffoldState.bottomSheetState.partialExpand()
                         }
@@ -140,7 +140,7 @@ fun DrawerFolderPage() {
                 Config.BS_EDIT_GROUP -> {
                     editGroup.value?.let { editGroup ->
                         EditGroupBottomSheet(AppGroupsManager.Category.FOLDER, editGroup) {
-                            sheetChanger = it
+                            sheetChanger = Config.BS_NONE
                             coroutineScope.launch {
                                 scaffoldState.bottomSheetState.partialExpand()
                             }
@@ -288,7 +288,8 @@ fun DrawerFolderPagePreview() {
 }
 
 fun saveGroupPositions(manager: AppGroupsManager, groups: List<AppGroups.Group>) {
-    manager.drawerFolders.setGroups(groups as List<DrawerFolders.CustomFolder>)
+    @Suppress("UNCHECKED_CAST")
+    manager.drawerFolders.setGroups(groups as List<DrawerFolders.Folder>)
     manager.drawerFolders.saveToJson()
 }
 
