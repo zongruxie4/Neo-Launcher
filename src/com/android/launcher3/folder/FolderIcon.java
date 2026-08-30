@@ -812,7 +812,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             // Fail silently — icon override is non-critical
         }
 
-        if (mOverrideDrawable != null || mInfo.useIconMode()) {
+        if (mInfo.useIconMode() && mOverrideDrawable == null) {
             lp.topMargin = 0;
             if (isInAppDrawer()) {
                 mFolderName.setCompoundDrawablePadding(grid.getAllAppsProfile().getIconDrawablePaddingPx());
@@ -821,7 +821,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             }
 
             isCustomIcon = true;
-            if (mOverrideDrawable == null && mInfo.isCoverMode()) {
+            if (mInfo.isCoverMode()) {
                 WorkspaceItemInfo coverInfo = mInfo.getCoverInfo();
                 if (coverInfo != null) {
                     mFolderName.setTag(coverInfo);
@@ -829,6 +829,18 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
                     applyCoverDotState(coverInfo, false);
                 }
             }
+            mBackground.setStartOpacity(0f);
+        } else if (mOverrideDrawable != null) {
+            isCustomIcon = true;
+            if (isInAppDrawer()) {
+                lp.topMargin = grid.getAllAppsProfile().getIconSizePx() + grid.getAllAppsProfile().getIconDrawablePaddingPx();
+            } else {
+                lp.topMargin = grid.getWorkspaceIconProfile().getIconSizePx()
+                        + grid.getWorkspaceIconProfile().getIconDrawablePaddingPx();
+            }
+
+            mFolderName.applyDotState(mInfo, false);
+            mFolderName.clearIcon();
             mBackground.setStartOpacity(0f);
         } else {
             isCustomIcon = false;
