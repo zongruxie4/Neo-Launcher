@@ -635,6 +635,8 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
         super.dispatchDraw(canvas);
 
         if (!mBackgroundIsVisible) return;
+        mPreviewItemManager.recomputePreviewDrawingParams();
+
         if (isCustomIcon) {
             if (mOverrideDrawable != null) {
                 // Draw the icon pack override drawable centered in the folder icon area
@@ -654,8 +656,6 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             mBackground.setStartOpacity(0f);
             return;
         }
-
-        mPreviewItemManager.recomputePreviewDrawingParams();
 
         if (!mBackground.drawingDelegated()) {
             mBackground.drawBackground(canvas);
