@@ -200,7 +200,7 @@ public class FolderInfo extends CollectionInfo {
         int iconSize = launcher.getDeviceProfile().folderIconSizePx;
         LinearLayout dummy = new LinearLayout(launcher, null);
         com.android.launcher3.folder.FolderIcon icon =  inflateIcon(R.layout.folder_icon, launcher, dummy, this);
-        icon.isCustomIcon = false;
+        icon.onIconChanged();
         icon.getFolderBackground().setStartOpacity(1f);
         Bitmap b = BitmapRenderer.createHardwareBitmap(iconSize, iconSize, out -> {
             out.translate(iconSize / 2f, 0);
