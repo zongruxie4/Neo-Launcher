@@ -156,7 +156,7 @@ fun CustomizeFolderView(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(vertical = 16.dp)
+                .padding(all = 16.dp)
                 .clip(MaterialTheme.shapes.medium)
                 .clickable(onClick = openEditIcon)
         ) {

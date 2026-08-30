@@ -64,9 +64,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -247,12 +250,19 @@ fun EditIconPage(
                         iconPack?.let { iconPack ->
                             AnimatedPane {
                                 Column {
+                                    val focusRequester = remember { FocusRequester() }
+                                    val focusManager = LocalFocusManager.current
+                                    LaunchedEffect(Unit) {
+                                        focusManager.clearFocus()
+                                    }
                                     SearchBarUI(
                                         searchInput = {
                                             SearchTextField(
                                                 value = searchQuery,
                                                 onValueChange = { searchQuery = it },
-                                                modifier = Modifier.fillMaxSize(),
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .focusRequester(focusRequester),
                                                 placeholder = {
                                                     Text(
                                                         text = iconPack.label.ifEmpty { title },

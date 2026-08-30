@@ -18,7 +18,6 @@
 
 package com.neoapps.neolauncher.compose.pages
 
-import android.graphics.drawable.Drawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -43,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -101,7 +101,7 @@ fun IconListPage(
             }
             items(
                 items = category.items,
-                key = { it.drawableName },
+                key = { "${category.title}_${it.drawableName}" },
             ) { item ->
                 IconPreview(
                     iconPack = iconPack,
@@ -130,9 +130,11 @@ fun IconPreview(
     iconItem: IconPickerItem,
     onClick: () -> Unit,
 ) {
-    val drawable by produceState<Drawable?>(initialValue = null, iconPack, iconItem) {
+    val context = LocalContext.current
+    val bitmap by produceState<ImageBitmap?>(initialValue = null, iconPack, iconItem, context) {
         launch(Dispatchers.IO) {
-            value = iconPack.getIcon(iconItem.toIconEntry(), 0)
+            val drawable = iconPack.getIcon(iconItem.toIconEntry(), 0) ?: context.getIcon()
+            value = drawableToBitmap(drawable).asImageBitmap()
         }
     }
     Box(
@@ -141,10 +143,12 @@ fun IconPreview(
             .clickable(onClick = onClick)
             .padding(8.dp),
     ) {
-        Image(
-            bitmap = drawableToBitmap(drawable ?: LocalContext.current.getIcon()).asImageBitmap(),
-            contentDescription = iconItem.drawableName,
-            modifier = Modifier.aspectRatio(1f),
-        )
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap!!,
+                contentDescription = iconItem.drawableName,
+                modifier = Modifier.aspectRatio(1f),
+            )
+        }
     }
 }
