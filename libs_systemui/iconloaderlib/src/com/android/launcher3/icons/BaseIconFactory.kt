@@ -226,7 +226,7 @@ constructor(
             inset /= (1 + 2 * inset)
             tempIcon =
                 AdaptiveIconDrawable(
-                    Color.BLACK.toDrawable(),
+                    Color.TRANSPARENT.toDrawable(),
                     InsetDrawable(icon, inset, inset, inset, inset),
                 )
         }
@@ -234,7 +234,8 @@ constructor(
         options.setWrapperBackgroundColor(IconPreferences(context).getWrapperBackgroundColor(icon))
         if (prefs.shouldWrapAdaptive()) tempIcon = wrapToAdaptiveIcon(tempIcon, options)
 
-        val drawFullBleed = options.drawFullBleed ?: drawFullBleedIcons
+        val drawFullBleed =
+            (options.drawFullBleed ?: drawFullBleedIcons) && tempIcon is AdaptiveIconDrawable
 
         val bitmap = drawableToBitmap(tempIcon, drawFullBleed, options)
         icon.bounds = oldBounds
@@ -376,12 +377,12 @@ constructor(
             return createBitmap(options) { canvas, _ ->
                 canvas.transformed {
                     translate(offset.toFloat(), offset.toFloat())
-                    if (options.addShadows && !drawFullBleed)
+                    if (options.addShadows && !drawFullBleed && prefs.iconShadow())
                         shadowGenerator.addPathShadow(icon.iconMask, canvas)
                     if (icon is Extender) icon.drawForPersistence()
 
                     if (drawFullBleed) {
-                        drawColor(Color.BLACK)
+                        drawColor(Color.TRANSPARENT)
                         icon.background?.draw(canvas)
                         icon.foreground?.draw(canvas)
                     } else {
@@ -398,21 +399,16 @@ constructor(
                     icon.wrapIntoSquareDrawable(options.iconScale)
                 else icon
             iconToDraw.setBounds(0, 0, iconBitmapSize, iconBitmapSize)
-            val legacyBackground = prefs.getWrapperBackgroundColor(icon)
             return createBitmap(options) { canvas, bitmap ->
-                if (prefs.coloredIconBackground() && prefs.coloredIconBackground()) {
-                    canvas.drawColor(legacyBackground)
-                } else {
-                    canvas.drawColor(Color.TRANSPARENT)
-                }
+                canvas.drawColor(Color.TRANSPARENT)
+
+                iconToDraw.draw(canvas)
 
                 if (options.addShadows && bitmap != null && !drawFullBleed && prefs.iconShadow()) {
                     // Shadow extraction only works in software mode
                     shadowGenerator.drawShadow(bitmap, canvas)
 
                     // Draw the icon again on top
-                    iconToDraw.draw(canvas)
-                } else {
                     iconToDraw.draw(canvas)
                 }
             }

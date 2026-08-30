@@ -61,7 +61,7 @@ private constructor(base: AdaptiveIconDrawable, private val animationInfo: Clock
             BitmapRenderer.createHardwareBitmap(bitmapSize, bitmapSize) {
                 val drawable = AdaptiveIconDrawable(background.constantState!!.newDrawable(), null)
                 drawable.setBounds(0, 0, bitmapSize, bitmapSize)
-                it.drawColor(Color.BLACK)
+                it.drawColor(Color.TRANSPARENT)
                 drawable.background?.draw(it)
             }
         return info.copy(

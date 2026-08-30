@@ -25,9 +25,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.palette.graphics.Palette
+import com.android.launcher3.icons.ColorExtractor
 
 class IconPreferences(context: Context) {
     private var prefs: SharedPreferences =
@@ -45,20 +45,16 @@ class IconPreferences(context: Context) {
     }
 
     fun getWrapperBackgroundColor(icon: Drawable): Int {
-        val lightness = prefs.getFloat("pref_icon_background_lightness", 1f)
-        val palette = Palette.Builder(drawableToBitmap(icon)).generate()
-        val dominantColor = palette.getDominantColor(Color.WHITE)
-        return setLightness(dominantColor, lightness)
-    }
-
-    private fun setLightness(color: Int, lightness: Float): Int {
-        if (color == Color.WHITE) {
-            return color
+        if (!coloredIconBackground()) {
+            return Color.WHITE
         }
-        val outHsl = floatArrayOf(0f, 0f, 0f)
-        ColorUtils.colorToHSL(color, outHsl)
-        outHsl[2] = lightness
-        return ColorUtils.HSLToColor(outHsl)
+        val bitmap = drawableToBitmap(icon)
+        val extractedColor = ColorExtractor.findDominantColorByHue(bitmap)
+        if (extractedColor != -0x1000000 && Color.alpha(extractedColor) != 0) {
+            return extractedColor
+        }
+        val palette = Palette.Builder(bitmap).generate()
+        return palette.getDominantColor(Color.WHITE)
     }
 }
 
