@@ -371,7 +371,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
                     if (mInfo instanceof DrawerFolderInfo) {
                         ((DrawerFolderInfo) mInfo).showEdit(mLauncher);
                     } else {
-                        FolderShortcut fc = new FolderShortcut(mLauncher, mInfo);
+                        FolderShortcut fc = new FolderShortcut(mLauncher, mInfo, this);
                         fc.show();
                     }
                 });

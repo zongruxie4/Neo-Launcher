@@ -28,6 +28,7 @@ import static com.android.launcher3.model.data.FolderInfo.willAcceptItemType;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -90,11 +91,13 @@ import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.FloatingIconViewCompanion;
 import com.android.launcher3.widget.PendingAddShortcutInfo;
 import com.neoapps.neolauncher.NeoLauncher;
+import com.neoapps.neolauncher.data.IconOverrideRepository;
 import com.neoapps.neolauncher.gestures.BlankGestureHandler;
 import com.neoapps.neolauncher.gestures.GestureHandler;
 import com.neoapps.neolauncher.gestures.RunnableGestureHandler;
 import com.neoapps.neolauncher.gestures.handlers.ViewSwipeUpGestureHandler;
 import com.neoapps.neolauncher.groups.category.DrawerFolderInfo;
+import com.neoapps.neolauncher.iconpack.IconPackProvider;
 import com.neoapps.neolauncher.preferences.NeoPrefs;
 import com.neoapps.neolauncher.util.ContextExtensionsKt;
 
@@ -155,6 +158,11 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
     private float mScaleForReorderBounce = 1f;
 
     public boolean isCustomIcon = false;
+    /**
+     * Drawable set from an icon pack override, null when no override is active.
+     */
+    @Nullable
+    private Drawable mOverrideDrawable = null;
     private GestureHandler mSwipeUpHandler;
 
     private static final Property<FolderIcon, Float> DOT_SCALE_PROPERTY
@@ -628,7 +636,14 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
 
         if (!mBackgroundIsVisible) return;
         if (isCustomIcon) {
-            if (mInfo.isCoverMode()) {
+            if (mOverrideDrawable != null) {
+                // Draw the icon pack override drawable centered in the folder icon area
+                int iconSize = mActivity.getDeviceProfile().getWorkspaceIconProfile().getIconSizePx();
+                int left = (getWidth() - iconSize) / 2;
+                int top = getPaddingTop();
+                mOverrideDrawable.setBounds(left, top, left + iconSize, top + iconSize);
+                mOverrideDrawable.draw(canvas);
+            } else if (mInfo.isCoverMode()) {
                 WorkspaceItemInfo coverInfo = mInfo.getCoverInfo();
                 if (coverInfo != null) {
                     mFolderName.setTag(coverInfo);
@@ -772,8 +787,32 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFolderName.getLayoutParams();
         DeviceProfile grid = mActivity.getDeviceProfile();
         mFolderName.setTag(null);
+        mOverrideDrawable = null;
+        try {
+            Context ctx = getContext();
+            ComponentName folderComponent = new ComponentName(
+                    ctx.getPackageName(), "folder_" + mInfo.id);
+            com.android.launcher3.util.ComponentKey folderKey =
+                    new com.android.launcher3.util.ComponentKey(folderComponent,
+                            android.os.Process.myUserHandle());
+            IconOverrideRepository overrideRepo = IconOverrideRepository.INSTANCE.get(ctx);
+            com.neoapps.neolauncher.data.models.IconPickerItem overrideItem =
+                    overrideRepo.getOverridesMap().get(folderKey);
+            if (overrideItem != null) {
+                IconPackProvider ipp = IconPackProvider.INSTANCE.get(ctx);
+                com.neoapps.neolauncher.iconpack.IconEntry entry = overrideItem.toIconEntry();
+                if (entry != null) {
+                    mOverrideDrawable = ipp.getDrawable(
+                            entry,
+                            ctx.getResources().getDisplayMetrics().densityDpi,
+                            android.os.Process.myUserHandle());
+                }
+            }
+        } catch (Exception ignored) {
+            // Fail silently — icon override is non-critical
+        }
 
-        if (mInfo.useIconMode()) {
+        if (mOverrideDrawable != null || mInfo.useIconMode()) {
             lp.topMargin = 0;
             if (isInAppDrawer()) {
                 mFolderName.setCompoundDrawablePadding(grid.getAllAppsProfile().getIconDrawablePaddingPx());
@@ -782,7 +821,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             }
 
             isCustomIcon = true;
-            if (mInfo.isCoverMode()) {
+            if (mOverrideDrawable == null && mInfo.isCoverMode()) {
                 WorkspaceItemInfo coverInfo = mInfo.getCoverInfo();
                 if (coverInfo != null) {
                     mFolderName.setTag(coverInfo);

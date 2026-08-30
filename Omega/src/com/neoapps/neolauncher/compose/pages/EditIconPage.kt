@@ -99,12 +99,27 @@ fun EditIconPage(
     val ipp = IconPackProvider.INSTANCE.get(LocalContext.current)
     val iconPacks = ipp.getIconPackList()
     val launcherApps = context.getSystemService<LauncherApps>()!!
-    val intent = Intent().setComponent(componentKey.componentName)
-    val activity = launcherApps.resolveActivity(intent, componentKey.user)
 
-    val originalIcon: Drawable = activity.getIcon(context.resources.displayMetrics.densityDpi)
+    val isFolder = componentKey.componentName.packageName == context.packageName &&
+            componentKey.componentName.className.startsWith("folder_")
+
+    val originalIcon: Drawable = remember(componentKey) {
+        if (isFolder) {
+            context.getDrawable(R.drawable.ic_folder_outline)!!
+        } else {
+            val intent = Intent().setComponent(componentKey.componentName)
+            val activity = launcherApps.resolveActivity(intent, componentKey.user)
+            activity.getIcon(context.resources.displayMetrics.densityDpi)
+        }
+    }
+
     val title = remember(componentKey) {
-        activity.label.toString()
+        if (isFolder) {
+            context.getString(R.string.folder_hint_text)
+        } else {
+            val intent = Intent().setComponent(componentKey.componentName)
+            launcherApps.resolveActivity(intent, componentKey.user)?.label?.toString() ?: ""
+        }
     }
     var searchQuery by remember { mutableStateOf("") }
     val iconPackName: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
@@ -176,7 +191,7 @@ fun EditIconPage(
                         ) {
                             val groupSize = iconPacks.size
                             itemsIndexed(iconPacks) { index, iconPack ->
-                                if (iconPack.packageName != context.getString(R.string.icon_packs_intent_name)) {
+                                if (iconPack.packageName != stringResource(R.string.icon_packs_intent_name)) {
                                     ListItemWithIcon(
                                         modifier = Modifier
                                             .clickable {
@@ -285,7 +300,9 @@ fun AppPacksIconsBar(
     onItemCLick: (IconPickerItem) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    val isFolder = componentKey.componentName.packageName.contains("com.saulhdev.omega.folder")
+    val context = LocalContext.current
+    val isFolder = componentKey.componentName.packageName == context.packageName &&
+            componentKey.componentName.className.startsWith("folder_")
     val iconDpi = LocalConfiguration.current.densityDpi
 
     Row(
@@ -303,11 +320,45 @@ fun AppPacksIconsBar(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
 
-        if (isFolder) { // TODO implement folder icons support
-            iconPacks.forEach {
-                ipp.getIconPack(it.packageName)?.let { iconPack ->
+        if (isFolder) {
+            // Show folder icons from installed icon packs
+            iconPacks.forEach { packInfo ->
+                ipp.getIconPackOrSystem(packInfo.packageName)?.let { iconPack ->
                     iconPack.loadBlocking()
-                    val iconEntry = iconPack.getIcon(componentKey.componentName)
+                    // Try to find a generic folder icon in the icon pack
+                    val folderEntry = iconPack.getIcon(componentKey.componentName)
+                        ?: iconPack.getIcon(
+                            android.content.ComponentName(
+                                packInfo.packageName, "${packInfo.packageName}.Folder"
+                            )
+                        )
+                        ?: iconPack.getIcon(
+                            android.content.ComponentName(
+                                packInfo.packageName, "${packInfo.packageName}.folder"
+                            )
+                        )
+                    if (folderEntry != null) {
+                        val mIcon: Drawable? =
+                            ipp.getDrawable(folderEntry, iconDpi, componentKey.user)
+                        if (mIcon != null) {
+                            Image(
+                                bitmap = drawableToBitmap(mIcon).asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .requiredSize(TOPBAR_HEIGHT)
+                                    .padding(vertical = TOPBAR_PADDING)
+                                    .clickable {
+                                        val iconPickerItem = IconPickerItem(
+                                            iconPack.packPackageName,
+                                            folderEntry.name,
+                                            folderEntry.name,
+                                            folderEntry.type
+                                        )
+                                        onItemCLick(iconPickerItem)
+                                    }
+                            )
+                        }
+                    }
                 }
             }
         } else {

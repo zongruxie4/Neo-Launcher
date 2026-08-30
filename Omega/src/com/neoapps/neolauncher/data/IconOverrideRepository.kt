@@ -64,15 +64,13 @@ class IconOverrideRepository  @Inject constructor(@ApplicationContext private va
 
     private fun updatePackageIcons(target: ComponentKey) {
         val model = LauncherAppState.getInstance(context).model
-        //TODO: Fix this
-        //model.onPackageChanged(target.componentName.packageName, target.user)
+        model.forceReload()
     }
 
     private fun updatePackageIcons(target: List<IconOverride>) {
-        val model = LauncherAppState.getInstance(context).model
-        target.forEach {
-            //TODO: Fix this
-            //model.onPackageChanged(it.target.componentName.packageName, it.target.user)
+        if (target.isNotEmpty()) {
+            val model = LauncherAppState.getInstance(context).model
+            model.forceReload()
         }
     }
 
