@@ -78,7 +78,6 @@ public class CustomFeatureFlags implements FeatureFlags {
     }
 
     @Override
-
     public boolean enableAllAppsButtonInHotseat() {
         return getValue(Flags.FLAG_ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT,
             FeatureFlags::enableAllAppsButtonInHotseat);
@@ -538,7 +537,6 @@ public class CustomFeatureFlags implements FeatureFlags {
     }
 
     @Override
-
     public boolean enableTwolineAllapps() {
         return getValue(Flags.FLAG_ENABLE_TWOLINE_ALLAPPS,
             FeatureFlags::enableTwolineAllapps);

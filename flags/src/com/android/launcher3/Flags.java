@@ -235,47 +235,38 @@ public final class Flags {
     public static final String FLAG_WORK_SCHEDULER_IN_WORK_PROFILE = "com.android.launcher3.work_scheduler_in_work_profile";
 
     public static boolean clearScrimOnReset() {
-
         return true;
     }
 
     public static boolean homeScreenEditImprovements() {
-
         return true;
     }
 
     public static boolean enableExpressiveFolderExpansion() {
-
         return true;
     }
 
     public static boolean simplifiedLauncherModelBinding() {
-
         return true;
     }
 
     public static boolean enableSystemDrag() {
-
         return true;
     }
 
     public static boolean refactorTaskbarUiState() {
-
         return true;
     }
 
     public static boolean multilineSearchBar() {
-
         return false;
     }
 
     public static boolean showFilesOnHomeScreen() {
-
         return true;
     }
 
     public static boolean enableWidgetPickerRefactor() {
-
         return true;
     }
 
