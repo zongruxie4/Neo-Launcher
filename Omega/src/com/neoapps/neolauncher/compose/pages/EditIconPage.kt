@@ -103,13 +103,27 @@ fun EditIconPage(
     val isFolder = componentKey.componentName.packageName == context.packageName &&
             componentKey.componentName.className.startsWith("folder_")
 
-    val originalIcon: Drawable = remember(componentKey) {
+    val currentOverride = repo.overridesMap[componentKey]
+
+    val originalIcon: Drawable = remember(componentKey, currentOverride) {
+        if (currentOverride != null) {
+            val pack = ipp.getIconPackOrSystem(currentOverride.packPackageName)
+            val customIcon = pack?.getIcon(
+                currentOverride.toIconEntry(),
+                context.resources.displayMetrics.densityDpi
+            )
+            if (customIcon != null) {
+                return@remember customIcon
+            }
+        }
+
         if (isFolder) {
             context.getDrawable(R.drawable.ic_folder_outline)!!
         } else {
             val intent = Intent().setComponent(componentKey.componentName)
             val activity = launcherApps.resolveActivity(intent, componentKey.user)
-            activity.getIcon(context.resources.displayMetrics.densityDpi)
+            activity?.getIcon(context.resources.displayMetrics.densityDpi)
+                ?: context.getDrawable(R.drawable.ic_folder_outline)!!
         }
     }
 
