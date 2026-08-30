@@ -45,11 +45,13 @@ class IconOverrideRepository  @Inject constructor(@ApplicationContext private va
 
     suspend fun setOverride(target: ComponentKey, item: IconPickerItem) {
         dao.insert(IconOverride(target, item))
+        _overridesMap = _overridesMap.toMutableMap().apply { put(target, item) }
         updatePackageQueue.offer(target)
     }
 
     suspend fun deleteOverride(target: ComponentKey) {
         dao.delete(target)
+        _overridesMap = _overridesMap.toMutableMap().apply { remove(target) }
         updatePackageQueue.offer(target)
     }
 

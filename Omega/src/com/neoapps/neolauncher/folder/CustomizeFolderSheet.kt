@@ -125,10 +125,14 @@ fun CustomizeFolderView(
         )
     }
 
+    val folderIcon = remember { mutableStateOf(folderInfo.getIcon(launcher)) }
     val editIconLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) onClose()
+        if (result.resultCode == Activity.RESULT_OK) {
+            folderIcon.value = folderInfo.getIcon(launcher)
+            onClose()
+        }
     }
 
     val openEditIcon = {
@@ -157,7 +161,7 @@ fun CustomizeFolderView(
                 .clickable(onClick = openEditIcon)
         ) {
             Image(
-                painter = rememberDrawablePainter(folderInfo.getIcon(launcher)),
+                painter = rememberDrawablePainter(folderIcon.value),
                 contentDescription = title,
                 modifier = Modifier
                     .requiredSize(64.dp)

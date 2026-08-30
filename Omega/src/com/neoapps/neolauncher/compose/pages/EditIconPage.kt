@@ -155,7 +155,9 @@ fun EditIconPage(
                 componentKey,
                 iconPickerItem
             )
-            (context as Activity).finish()
+            val activity = context as Activity
+            activity.setResult(Activity.RESULT_OK)
+            activity.finish()
         }
     }
     val pickerLauncher =
