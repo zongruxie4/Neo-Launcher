@@ -32,7 +32,7 @@ import java.nio.ByteBuffer
 
 class MonoThemedBitmap(
     val mono: Bitmap,
-    private val colorProvider: (Context) -> IntArray = ThemedIconDelegate.Companion::getColors,
+    private val colorProvider: (Context) -> IntArray = ThemedIconDrawable.Companion::getColors,
     @get:VisibleForTesting val luminanceDelta: Double? = null,
 ) : ThemedBitmap {
 

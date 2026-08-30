@@ -185,6 +185,7 @@ class NeoPrefs private constructor(val context: Context) {
         defaultValue = Utilities.ATLEAST_T,
         onChange = {
             legacyPrefs.savePreference(KEY_THEMED_ICONS, it)
+            ThemeManager.INSTANCE.get(context).isMonoThemeEnabled = it
         }
     )
 

@@ -88,6 +88,9 @@ class CustomIconProvider @JvmOverloads @Inject constructor(
     private val supportsIconTheme get() = themeMap != DISABLED_MAP
 
     init {
+        if (themeManager.isMonoThemeEnabled != themedIconsEnabled) {
+            themeManager.isMonoThemeEnabled = themedIconsEnabled
+        }
         setIconThemeSupported(themeManager.isIconThemeEnabled && supportsIconTheme)
     }
 
@@ -187,7 +190,7 @@ class CustomIconProvider @JvmOverloads @Inject constructor(
         val themeData = getThemeDataForPackage(packageName)
         var themedIcon: Drawable? = null
 
-        val themedColors = ThemedIconDrawable.getThemedColors(context)
+        val themedColors = ThemedIconDrawable.getColors(context)
 
         if (iconEntry != null) {
             val clock = iconPackProvider.getClockMetadata(iconEntry)
