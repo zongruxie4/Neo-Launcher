@@ -28,8 +28,9 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.createBitmap
 import androidx.palette.graphics.Palette
 import com.android.launcher3.icons.ColorExtractor
+import com.android.launcher3.icons.R
 
-class IconPreferences(context: Context) {
+class IconPreferences(val context: Context) {
     private var prefs: SharedPreferences =
         context.getSharedPreferences("com.android.launcher3.prefs", Context.MODE_PRIVATE)
 
@@ -43,7 +44,13 @@ class IconPreferences(context: Context) {
     fun coloredIconBackground(): Boolean {
         return prefs.getBoolean("profile_icon_colored_background", false)
     }
-
+    fun accentColor(): Int {
+        val res = context.resources
+        return prefs.getInt(
+            "profile_accent_color",
+            res.getColor(R.color.themed_icon_background_color)
+        )
+    }
     fun getWrapperBackgroundColor(icon: Drawable): Int {
         if (!coloredIconBackground()) {
             return Color.WHITE

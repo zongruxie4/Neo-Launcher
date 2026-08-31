@@ -21,9 +21,11 @@ package com.neoapps.neolauncher.preferences
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.core.graphics.ColorUtils
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
@@ -67,6 +69,7 @@ import com.neoapps.neolauncher.smartspace.provider.BatteryStatusProvider
 import com.neoapps.neolauncher.smartspace.provider.NowPlayingProvider
 import com.neoapps.neolauncher.smartspace.weather.GoogleWeatherProvider
 import com.neoapps.neolauncher.smartspace.weather.OWMWeatherProvider
+import com.neoapps.neolauncher.theme.AccentColorOption
 import com.neoapps.neolauncher.util.Config
 import com.neoapps.neolauncher.util.CustomPreferencesMigration
 import com.neoapps.neolauncher.util.getFeedProviders
@@ -145,6 +148,11 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.PROFILE_ACCENT_COLOR,
         defaultValue = "system_accent",
         navRoute = NavRoute.Profile.AccentColor(),
+        onChange = {
+            var color = AccentColorOption.fromString(it).accentColor
+            val lighterColor = ColorUtils.blendARGB(color, Color.WHITE, 0.75f)
+            legacyPrefs.savePreference("profile_accent_color", lighterColor)
+        }
     )
 
     var profileIconShape = NavigationPref(
