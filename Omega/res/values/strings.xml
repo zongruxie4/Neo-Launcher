@@ -196,7 +196,7 @@
         <item quantity="one">%1$d Hidden</item>
         <item quantity="other">%1$d Hidden</item>
     </plurals>
-    <string name="protected_apps">Protected Apps</string>
+    <string name="protected_apps">Tap to open protected Apps</string>
     <string name="category_art_and_design">Design</string>
     <string name="category_business_and_productivity">Productivity</string>
     <string name="category_communication">Communication</string>

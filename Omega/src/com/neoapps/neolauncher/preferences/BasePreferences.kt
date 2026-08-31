@@ -332,6 +332,7 @@ class TwoStatePref(
     key: Preferences.Key<Boolean>,
     val navRoute: NavRoute,
     val defaultValue: Boolean = false,
+    val confirmAction: ((Context, Boolean, Runnable) -> Unit)? = null,
     onChange: (Boolean) -> Unit = {}
 ) : PrefDelegate<Boolean>(titleId, summaryId, dataStore, key, defaultValue, onChange)
 

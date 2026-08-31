@@ -730,11 +730,13 @@ class NeoPrefs private constructor(val context: Context) {
         reloadGrid()
     }
 
-    var drawerEnableProtectedApps = BooleanPref(
+    var drawerEnableProtectedApps = TwoStatePref(
         dataStore = dataStore,
         key = PrefKey.DRAWER_PROTECTED_APPS_ENABLED,
         titleId = R.string.enable_protected_apps,
+        summaryId = R.string.protected_apps,
         defaultValue = false,
+        navRoute = NavRoute.Drawer.ProtectedApps(),
         confirmAction = { context, newValue, successRunnable ->
             if (!newValue) {
                 Config.showLockScreen(
@@ -959,7 +961,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         key = PrefKey.DRAWER_ENABLE_FOLDERS,
         defaultValue = true,
-        titleId = R.string.title_manage_folders,
+        titleId = R.string.title_enable_folders,
         summaryId = R.string.summary_manage_folders,
         navRoute = NavRoute.Drawer.Folders(),
     )

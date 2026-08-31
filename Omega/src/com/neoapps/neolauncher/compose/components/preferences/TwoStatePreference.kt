@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -66,6 +67,7 @@ fun TwoStatePreference(
     onCheckedChange: ((Boolean) -> Unit) = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val paneNavigator = LocalPaneNavigator.current
     val (checked, check) = remember(pref) { mutableStateOf(pref.getValue()) }
 
@@ -76,9 +78,28 @@ fun TwoStatePreference(
             coroutineScope.launch { pref.setValue(newValue) }
             Unit
         }
-        update()
+        if (pref.confirmAction != null) {
+            pref.confirmAction(context, newValue, update)
+        } else {
+            update()
+        }
 
     }
+    val onClick = {
+        val navigateTo = {
+            coroutineScope.launch {
+                paneNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail, pref.navRoute)
+            }
+            Unit
+        }
+
+        if (pref.confirmAction != null) {
+            pref.confirmAction(context, true, navigateTo)
+        } else {
+            navigateTo()
+        }
+    }
+
     TwoStatePreference(
         title = pref.titleId,
         modifier = modifier,
@@ -88,9 +109,7 @@ fun TwoStatePreference(
         index = index,
         groupSize = groupSize,
         onclick = {
-            coroutineScope.launch {
-                paneNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail, pref.navRoute)
-            }
+            onClick()
         },
         onValueChange = {
             onToggle(!checked)
