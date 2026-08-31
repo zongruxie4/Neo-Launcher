@@ -948,19 +948,20 @@ class NeoPrefs private constructor(val context: Context) {
         navRoute = NavRoute.Drawer.Categorize(),
     )
 
-    var drawerFolderManager = NavigationPref(
-        dataStore = dataStore,
-        key = PrefKey.DRAWER_FOLDERS,
-        titleId = R.string.title_manage_folders,
-        summaryId = R.string.summary_manage_folders,
-        navRoute = NavRoute.Drawer.Folders(),
-    )
-
     val drawerEnableFolders = BooleanPref(
         dataStore = dataStore,
         key = PrefKey.DRAWER_ENABLE_FOLDERS,
         titleId = R.string.title_enable_folders,
         defaultValue = false
+    )
+
+    var drawerFolderManager = TwoStatePref(
+        dataStore = dataStore,
+        key = PrefKey.DRAWER_ENABLE_FOLDERS,
+        defaultValue = true,
+        titleId = R.string.title_manage_folders,
+        summaryId = R.string.summary_manage_folders,
+        navRoute = NavRoute.Drawer.Folders(),
     )
 
     // Notifications & Widgets/Smartspace

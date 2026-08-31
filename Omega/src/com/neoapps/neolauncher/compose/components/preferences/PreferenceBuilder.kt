@@ -37,6 +37,7 @@ import com.neoapps.neolauncher.preferences.StringPref
 import com.neoapps.neolauncher.preferences.StringSelectionPref
 import com.neoapps.neolauncher.preferences.StringSetPref
 import com.neoapps.neolauncher.preferences.StringTextPref
+import com.neoapps.neolauncher.preferences.TwoStatePref
 
 @Composable
 fun PreferenceBuilder(pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: Int) = when (pref) {
@@ -81,6 +82,8 @@ fun PreferenceBuilder(pref: Any, onDialogPref: (Any) -> Unit, index: Int, size: 
 
     is IntPref                  ->
         IntSeekBarPreference(pref = pref, index = index, groupSize = size)
+    is TwoStatePref ->
+        TwoStatePreference(pref = pref, index = index, groupSize = size)
 
     is IdpIntPref               ->
         IntSeekBarPreference(pref = pref, index = index, groupSize = size)
