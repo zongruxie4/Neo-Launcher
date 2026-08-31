@@ -35,7 +35,7 @@ import com.android.launcher3.dagger.LauncherAppSingleton
 import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.icons.ClockDrawableWrapper
 import com.android.launcher3.icons.LauncherIconProvider
-import com.android.launcher3.icons.mono.ThemedIconDrawable
+import com.android.launcher3.icons.mono.ThemedIconDelegate
 import com.android.launcher3.util.ComponentKey
 import com.neoapps.neolauncher.data.IconOverrideRepository
 import com.neoapps.neolauncher.iconpack.IconEntry
@@ -190,7 +190,7 @@ class CustomIconProvider @JvmOverloads @Inject constructor(
         val themeData = getThemeDataForPackage(packageName)
         var themedIcon: Drawable? = null
 
-        val themedColors = ThemedIconDrawable.getColors(context)
+        val themedColors = ThemedIconDelegate.getColors(context)
 
         if (iconEntry != null) {
             val clock = iconPackProvider.getClockMetadata(iconEntry)

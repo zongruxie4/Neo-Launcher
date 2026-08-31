@@ -1405,7 +1405,9 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         // If we had already set an icon before, disable relayout as the icon size is the
         // same as before.
         mDisableRelayout = mIcon != null;
-
+        if (icon instanceof FastBitmapDrawable fbd) {
+            fbd.resetScale();
+        }
         icon.setBounds(0, 0, mIconSize, mIconSize);
 
         updateIcon(icon);

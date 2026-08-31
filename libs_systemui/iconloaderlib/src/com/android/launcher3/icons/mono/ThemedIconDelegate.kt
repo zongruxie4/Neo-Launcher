@@ -21,6 +21,8 @@ import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.Rect
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import com.android.launcher3.icons.BitmapInfo
 import com.android.launcher3.icons.FastBitmapDrawable
 import com.android.launcher3.icons.FastBitmapDrawableDelegate
@@ -38,18 +40,18 @@ class ThemedIconDelegate(
 ) : FastBitmapDrawableDelegate {
 
     private val colorFg = constantState.colorFg
+    private val colorBg = constantState.colorBg
 
     // The foreground/monochrome icon for the app
     private val monoIcon = constantState.mono
+    private val monoFilter =
+        BlendModeColorFilterCompat.createBlendModeColorFilterCompat(colorFg, BlendModeCompat.SRC_IN)
     private val monoPaint =
-        Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply {
-            colorFilter = getColorMultipliedFilter(colorFg, paint.colorFilter)
-        }
-
+        Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply { colorFilter = monoFilter }
     private val shapeBounds = Rect(0, 0, bitmapInfo.icon.width, bitmapInfo.icon.height)
 
     init {
-        paint.color = constantState.colorBg
+        paint.color = colorBg
     }
 
     override fun drawContent(
@@ -84,6 +86,9 @@ class ThemedIconDelegate(
         const val TAG: String = "ThemedIconDrawable"
 
         /** Get an int array representing background and foreground colors for themed icons */
+
+        const val FULLY_OPAQUE = 1
+
         @JvmStatic
         fun getColors(context: Context): IntArray {
             val res = context.resources
