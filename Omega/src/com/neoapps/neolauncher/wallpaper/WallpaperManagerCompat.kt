@@ -52,6 +52,7 @@ sealed class WallpaperManagerCompat(val context: Context) {
         @JvmField
         val INSTANCE = MainThreadInitializedObject { context ->
             when {
+                Utilities.ATLEAST_W -> WallpaperManagerCompatVW(context)
                 Utilities.ATLEAST_S -> WallpaperManagerCompatVS(context)
                 else -> WallpaperManagerCompatVOMR1(context)
             }
