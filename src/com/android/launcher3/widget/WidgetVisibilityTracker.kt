@@ -17,14 +17,10 @@
 package com.android.launcher3.widget
 
 import android.view.View
-import androidx.core.util.forEach
-import com.android.launcher3.AbstractFloatingView
-import com.android.launcher3.AbstractFloatingView.TYPE_ALL
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherState
 import com.android.launcher3.PagedView
 import com.android.launcher3.Workspace
-import com.android.launcher3.model.data.LauncherAppWidgetInfo
 import com.android.launcher3.statemanager.StateManager
 import com.android.launcher3.views.ActivityContext
 
@@ -60,23 +56,24 @@ class WidgetVisibilityTracker(
     }
 
     private fun updateVisibility() {
-        val inNormalState = stateManager.currentStableState == LauncherState.NORMAL
-        val noFloatingViews =
-            AbstractFloatingView.getAnyView<AbstractFloatingView>(activityContext, TYPE_ALL) == null
-        val visiblePages = workspace.visiblePageIndices
-        widgetHolder.views.forEach { _, view ->
-            val pageIndex =
-                (view.tag as? LauncherAppWidgetInfo)?.screenId?.let {
-                    workspace.getPageIndexForScreenId(it)
-                } ?: return@forEach
-            if (inNormalState && noFloatingViews && pageIndex in visiblePages) {
-                view.visibility = View.VISIBLE
-                //view.startVisibilityTracking()
-            } else {
-                view.visibility = View.GONE
-                //view.stopVisibilityTracking()
-            }
-        }
+        // AOSP tells each widget whether it is on screen through
+        // AppWidgetHostView.startVisibilityTracking() / stopVisibilityTracking(). That is a hint
+        // to the provider, and it leaves the view in place. Both methods are public since
+        // SDK 36.1, but they are missing from prebuilt/libs/framework-16.jar, which comes ahead
+        // of the SDK android.jar on the compile classpath, so they cannot be called from here
+        // yet.
+        //
+        // They had been replaced with View.GONE / View.VISIBLE. That is not equivalent: a GONE
+        // view is neither laid out nor drawn. And since this method only runs once a page switch
+        // has been committed, at the end of the scroll, two defects followed:
+        //   - widgets on the incoming page were not drawn for the whole page transition, then
+        //     popped in at once;
+        //   - any open floating view hid every widget, and the resize frame is one, so the
+        //     widget being resized vanished and stopped being laid out -- its frame stayed at
+        //     the size it had when the resize started, until the frame was dismissed.
+        //
+        // So leave view visibility alone. The hint can come back exactly as AOSP writes it once
+        // the prebuilt framework jar carries the API.
     }
 
     fun destroy() {
