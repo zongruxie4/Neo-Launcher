@@ -197,7 +197,7 @@
     <string name="dialog_message_change_sort">Wisselen naar alfabetische sortering?</string>
     <string name="summary__drawer_hide_apps">App in de app-lade verbergen</string>
     <string name="label_turn_off_suggestions">Uitschakelen</string>
-    <string name="protected_apps">Beveiligde apps</string>
+    <string name="protected_apps">Tik om beveiligde apps te openen</string>
     <string name="title__drawer_rows">Aantal rijen</string>
     <string name="protected_app_selected">Beveiligde apps (%1$d)</string>
     <string name="title_desktop_free_scrolling">Vrij bladeren</string>
