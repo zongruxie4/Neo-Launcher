@@ -464,7 +464,7 @@
     <string name="cat_dock_search">Cassetto e barra app</string>
     <string name="title_desktop_widget_corner_radius">Raggio dell\'angolo del widget</string>
     <string name="title__drawer_rows">Numero di righe</string>
-    <string name="protected_apps">App protette</string>
+    <string name="protected_apps">Tocca per aprire le app protette</string>
     <string name="protected_app_selected">App protette (%1$d)</string>
     <string name="owm_get_your_own_key">Ottieni una chiave API su api.openweathermap.org.</string>
     <string name="contributor_role">Collaboratore</string>
