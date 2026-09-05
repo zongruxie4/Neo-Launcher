@@ -537,6 +537,12 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         if (hasPendingAnimationCompleted(mIcon) || !mIcon.isSameInfo(info.bitmap)) {
             setNonPendingIcon(info);
         }
+        // The disabled look is only baked in by newIcon() when the drawable is created. When the
+        // drawable above is reused -- the bitmap did not change, only the runtime flags did,
+        // which is exactly what happens when the system suspends or un-suspends an app --
+        // nothing else refreshes it, and the icon keeps whatever state it was created with.
+        // Re-syncing here is a no-op when the state already matches.
+        setIconDisabled(info.isDisabled());
         applyLabel(info);
         maybeApplyProgressLevel(info, oldIcon);
     }
