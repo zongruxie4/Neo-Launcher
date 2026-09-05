@@ -64,9 +64,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -99,12 +102,41 @@ fun EditIconPage(
     val ipp = IconPackProvider.INSTANCE.get(LocalContext.current)
     val iconPacks = ipp.getIconPackList()
     val launcherApps = context.getSystemService<LauncherApps>()!!
-    val intent = Intent().setComponent(componentKey.componentName)
-    val activity = launcherApps.resolveActivity(intent, componentKey.user)
 
-    val originalIcon: Drawable = activity.getIcon(context.resources.displayMetrics.densityDpi)
+    val isFolder = componentKey.componentName.packageName == context.packageName &&
+            componentKey.componentName.className.startsWith("folder_")
+
+    val currentOverride = repo.overridesMap[componentKey]
+
+    val originalIcon: Drawable = remember(componentKey, currentOverride) {
+        if (currentOverride != null) {
+            val pack = ipp.getIconPackOrSystem(currentOverride.packPackageName)
+            val customIcon = pack?.getIcon(
+                currentOverride.toIconEntry(),
+                context.resources.displayMetrics.densityDpi
+            )
+            if (customIcon != null) {
+                return@remember customIcon
+            }
+        }
+
+        if (isFolder) {
+            context.getDrawable(R.drawable.ic_folder_outline)!!
+        } else {
+            val intent = Intent().setComponent(componentKey.componentName)
+            val activity = launcherApps.resolveActivity(intent, componentKey.user)
+            activity?.getIcon(context.resources.displayMetrics.densityDpi)
+                ?: context.getDrawable(R.drawable.ic_folder_outline)!!
+        }
+    }
+
     val title = remember(componentKey) {
-        activity.label.toString()
+        if (isFolder) {
+            context.getString(R.string.folder_hint_text)
+        } else {
+            val intent = Intent().setComponent(componentKey.componentName)
+            launcherApps.resolveActivity(intent, componentKey.user)?.label?.toString() ?: ""
+        }
     }
     var searchQuery by remember { mutableStateOf("") }
     val iconPackName: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
@@ -126,7 +158,9 @@ fun EditIconPage(
                 componentKey,
                 iconPickerItem
             )
-            (context as Activity).finish()
+            val activity = context as Activity
+            activity.setResult(Activity.RESULT_OK)
+            activity.finish()
         }
     }
     val pickerLauncher =
@@ -176,7 +210,7 @@ fun EditIconPage(
                         ) {
                             val groupSize = iconPacks.size
                             itemsIndexed(iconPacks) { index, iconPack ->
-                                if (iconPack.packageName != context.getString(R.string.icon_packs_intent_name)) {
+                                if (iconPack.packageName != stringResource(R.string.icon_packs_intent_name)) {
                                     ListItemWithIcon(
                                         modifier = Modifier
                                             .clickable {
@@ -216,12 +250,19 @@ fun EditIconPage(
                         iconPack?.let { iconPack ->
                             AnimatedPane {
                                 Column {
+                                    val focusRequester = remember { FocusRequester() }
+                                    val focusManager = LocalFocusManager.current
+                                    LaunchedEffect(Unit) {
+                                        focusManager.clearFocus()
+                                    }
                                     SearchBarUI(
                                         searchInput = {
                                             SearchTextField(
                                                 value = searchQuery,
                                                 onValueChange = { searchQuery = it },
-                                                modifier = Modifier.fillMaxSize(),
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .focusRequester(focusRequester),
                                                 placeholder = {
                                                     Text(
                                                         text = iconPack.label.ifEmpty { title },
@@ -285,7 +326,9 @@ fun AppPacksIconsBar(
     onItemCLick: (IconPickerItem) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    val isFolder = componentKey.componentName.packageName.contains("com.saulhdev.omega.folder")
+    val context = LocalContext.current
+    val isFolder = componentKey.componentName.packageName == context.packageName &&
+            componentKey.componentName.className.startsWith("folder_")
     val iconDpi = LocalConfiguration.current.densityDpi
 
     Row(
@@ -303,11 +346,45 @@ fun AppPacksIconsBar(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
 
-        if (isFolder) { // TODO implement folder icons support
-            iconPacks.forEach {
-                ipp.getIconPack(it.packageName)?.let { iconPack ->
+        if (isFolder) {
+            // Show folder icons from installed icon packs
+            iconPacks.forEach { packInfo ->
+                ipp.getIconPackOrSystem(packInfo.packageName)?.let { iconPack ->
                     iconPack.loadBlocking()
-                    val iconEntry = iconPack.getIcon(componentKey.componentName)
+                    // Try to find a generic folder icon in the icon pack
+                    val folderEntry = iconPack.getIcon(componentKey.componentName)
+                        ?: iconPack.getIcon(
+                            android.content.ComponentName(
+                                packInfo.packageName, "${packInfo.packageName}.Folder"
+                            )
+                        )
+                        ?: iconPack.getIcon(
+                            android.content.ComponentName(
+                                packInfo.packageName, "${packInfo.packageName}.folder"
+                            )
+                        )
+                    if (folderEntry != null) {
+                        val mIcon: Drawable? =
+                            ipp.getDrawable(folderEntry, iconDpi, componentKey.user)
+                        if (mIcon != null) {
+                            Image(
+                                bitmap = drawableToBitmap(mIcon).asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .requiredSize(TOPBAR_HEIGHT)
+                                    .padding(vertical = TOPBAR_PADDING)
+                                    .clickable {
+                                        val iconPickerItem = IconPickerItem(
+                                            iconPack.packPackageName,
+                                            folderEntry.name,
+                                            folderEntry.name,
+                                            folderEntry.type
+                                        )
+                                        onItemCLick(iconPickerItem)
+                                    }
+                            )
+                        }
+                    }
                 }
             }
         } else {

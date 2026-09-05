@@ -129,11 +129,12 @@ public class DeviceProfile {
     private CalculatedCellSpec mResponsiveWorkspaceCellSpec;
     private CalculatedCellSpec mResponsiveAllAppsCellSpec;
 
-    public WorkspaceProfile mWorkspaceProfile;
+    private WorkspaceProfile mWorkspaceProfile;
 
     private final FolderProfile mFolderProfile;
     public int folderIconSizePx;
     public int folderIconOffsetYPx;
+    public int allAppsFolderIconOffsetYPx;
 
     // Hotseat
     private final HotseatProfile hotseatProfile;
@@ -674,8 +675,11 @@ public class DeviceProfile {
 
     /** Updates hotseatCellHeightPx and hotseatBarSizePx */
     private void updateHotseatSizes(int hotseatIconSizePx) {
+        NeoPrefs prefs = NeoPrefs.getInstance();
+
         // Ensure there is enough space for folder icons, which have a slightly larger radius.
         hotseatCellHeightPx = getIconSizeWithOverlap(hotseatIconSizePx);
+        hotseatBarBottomSpacePx *= prefs.getDockBottomPadding().getValue();
 
         if (isVerticalBarLayout()) {
             hotseatBarSizePx = hotseatIconSizePx + getHotseatProfile().getBarEdgePaddingPx()
@@ -690,7 +694,7 @@ public class DeviceProfile {
                     + hotseatBarBottomSpacePx;
         }
 
-        boolean dockEnabled = NeoPrefs.getInstance().getDockEnabled().getValue();
+        boolean dockEnabled = prefs.getDockEnabled().getValue();
         if (!dockEnabled) {
             hotseatBarSizePx = 0;
         }
@@ -886,6 +890,8 @@ public class DeviceProfile {
         folderIconSizePx = Math.round(
                 getWorkspaceIconProfile().getIconSizePx() * ICON_VISIBLE_AREA_FACTOR);
         folderIconOffsetYPx = (getWorkspaceIconProfile().getIconSizePx() - folderIconSizePx) / 2;
+        int AllAppsFolderIconSizePx = Math.round(mAllAppsProfile.getIconSizePx() * ICON_VISIBLE_AREA_FACTOR);
+        allAppsFolderIconOffsetYPx = (mAllAppsProfile.getIconSizePx() - AllAppsFolderIconSizePx) / 2;
 
         // Update widget padding:
         float minSpacing = pxFromDp(MIN_WIDGET_PADDING_DP, mMetrics);

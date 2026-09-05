@@ -45,11 +45,13 @@ class IconOverrideRepository  @Inject constructor(@ApplicationContext private va
 
     suspend fun setOverride(target: ComponentKey, item: IconPickerItem) {
         dao.insert(IconOverride(target, item))
+        _overridesMap = _overridesMap.toMutableMap().apply { put(target, item) }
         updatePackageQueue.offer(target)
     }
 
     suspend fun deleteOverride(target: ComponentKey) {
         dao.delete(target)
+        _overridesMap = _overridesMap.toMutableMap().apply { remove(target) }
         updatePackageQueue.offer(target)
     }
 
@@ -64,15 +66,13 @@ class IconOverrideRepository  @Inject constructor(@ApplicationContext private va
 
     private fun updatePackageIcons(target: ComponentKey) {
         val model = LauncherAppState.getInstance(context).model
-        //TODO: Fix this
-        //model.onPackageChanged(target.componentName.packageName, target.user)
+        model.forceReload()
     }
 
     private fun updatePackageIcons(target: List<IconOverride>) {
-        val model = LauncherAppState.getInstance(context).model
-        target.forEach {
-            //TODO: Fix this
-            //model.onPackageChanged(it.target.componentName.packageName, it.target.user)
+        if (target.isNotEmpty()) {
+            val model = LauncherAppState.getInstance(context).model
+            model.forceReload()
         }
     }
 

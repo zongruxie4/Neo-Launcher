@@ -4,7 +4,6 @@
     <string name="title__general_about">Over</string>
     <string name="title__general_desktop">Bureaublad</string>
     <string name="title__general_theme">Thema</string>
-    <string name="title__general_search">Zoeken en Mappen</string>
     <string name="title__general_advanced">Geavanceerde instellingen</string>
     <string name="summary__general_desktop">Personaliseer je startscherm</string>
     <string name="summary__general_theme">Verander kleuren, pictogrammenpakket en -vorm</string>
@@ -156,7 +155,6 @@
     <string name="title__general_drawer">App-lade</string>
     <string name="summary__general_dock">Primaire pictogrammen, zoekbalk</string>
     <string name="summary__general_drawer">Personaliseer je app-lade</string>
-    <string name="summary__general_advanced">Taal, back-up, instellingen zoeken</string>
     <string name="pref_category__incubating">Experimenteel</string>
     <string name="summary__general_notifications">Badge-aantal, badge-kleur, gebaren</string>
     <string name="title__desktop_grid_size">Rastergrootte</string>
@@ -199,7 +197,7 @@
     <string name="dialog_message_change_sort">Wisselen naar alfabetische sortering?</string>
     <string name="summary__drawer_hide_apps">App in de app-lade verbergen</string>
     <string name="label_turn_off_suggestions">Uitschakelen</string>
-    <string name="protected_apps">Beveiligde apps</string>
+    <string name="protected_apps">Tik om beveiligde apps te openen</string>
     <string name="title__drawer_rows">Aantal rijen</string>
     <string name="protected_app_selected">Beveiligde apps (%1$d)</string>
     <string name="title_desktop_free_scrolling">Vrij bladeren</string>
@@ -394,7 +392,7 @@
     <string name="battery_low">Batterijniveau laag</string>
     <string name="battery_charging_percentage_charging_time">%1$d%% — Vol in %2$s</string>
     <string name="n_percent">%1$d%%</string>
-    <string name="event_provider_missing_notification_access">Schakel meldingen van <xliff:g example="My App" id="name">“%2$s” in om </xliff:g><xliff:g example="My Provider" id="providerName">“%1$s”</xliff:g> te gebruiken.</string>
+    <string name="event_provider_missing_notification_access">Schakel meldingen van <xliff:g example="My App" id="name">“%2$s” in om </xliff:g><xliff:g example="My Provider" id="providerName">“%1$s”</xliff:g> te gebruiken</string>
     <string name="event_provider_missing_notification_dots">Schakel de meldingsstippen in om <xliff:g example="My Provider" id="providerName">“%1$s”</xliff:g> te gebruiken.</string>
     <string name="permission_iplocate_twilight_explanation">Toegang verlenen tot je geschatte locatie? Dit maakt een nauwkeuriger berekening van het daglicht mogelijk.</string>
     <string name="allow">Toestaan</string>
@@ -546,4 +544,29 @@
     <string name="title_desktop_cycle_scrolling">Cyclisch scrollen</string>
     <string name="title_show_icon_shadow">Pictogramschaduw weergeven</string>
     <string name="summary_show_icon_shadow">Schaduw weergeven voor niet-adaptieve pictogrammen.</string>
+    <string name="folder_full_screen">Map openen in volledig scherm</string>
+    <string name="backup_create">Back-up maken</string>
+    <string name="backup_restore">Back-up herstellen</string>
+    <string name="backup_databases">Databank</string>
+    <string name="backup_created">Back-up gemaakt</string>
+    <string name="backup_manage_storage_permission_title">Toegang tot alle bestanden vereist</string>
+    <string name="backup_manage_storage_permission_summary">Geef \'Externe opslag beheren\' toegang voordat je back-ups maakt. De launcher vernieuwt deze status automatisch wanneer je terugkeert vanuit de instellingen.</string>
+    <string name="backup_grant_storage_permission">Toegang tot opslag verlenen</string>
+    <string name="folder_icon_shape">Pictogramvorm map</string>
+    <string name="title_enable_folders">Mappen in lade inschakelen</string>
+    <string name="title_manage_folders">Mappen beheren</string>
+    <string name="summary_manage_folders">Mappen maken of bewerken</string>
+    <string name="title_general_folder">Map</string>
+    <string name="set_as_home_screen">Instellen als startscherm</string>
+    <string name="default_home_screen">Startscherm</string>
+    <string name="home_screen_set_toast">Startscherm ingesteld</string>
+    <string name="remove_page">Pagina verwijderen</string>
+    <string name="move_page_left">Pagina naar links verplaatsen</string>
+    <string name="move_page_right">Pagina naar rechts verplaatsen</string>
+    <string name="pref_title_folder">Mappen aanpassen</string>
+    <string name="pref_title_general">Algemeen</string>
+    <string name="title_dock_bottom_padding">Opvulling onder dok</string>
+    <string name="permission_grant">Verlenen</string>
+    <string name="permission_wallpaper_title">Achtergrondtoegang</string>
+    <string name="permission_wallpaper_message">Neo Launcher heeft toegang tot je achtergrondafbeelding nodig om vervagingseffecten toe te passen. Zonder deze toestemming wordt de vervaagde achtergrond uitgeschakeld.</string>
 </resources>

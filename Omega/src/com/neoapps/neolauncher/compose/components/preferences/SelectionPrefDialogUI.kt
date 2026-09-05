@@ -92,7 +92,7 @@ fun IntSelectionPrefDialogUI(
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
@@ -102,26 +102,30 @@ fun IntSelectionPrefDialogUI(
             Text(text = stringResource(pref.titleId), style = MaterialTheme.typography.titleLarge)
             LazyColumn(
                 modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 4.dp)
-                    .weight(1f, false)
                     .blockShadow()
+                    .padding(all = 8.dp)
+                    .weight(1f, false),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
+                val groupSize = entryPairs.size
                 items(items = entryPairs) {
                     val isSelected = rememberSaveable(selected) {
                         mutableStateOf(selected == it.first)
                     }
                     SingleSelectionListItem(
-                        text = stringResource(id = it.second),
-                        isSelected = isSelected.value
+                        title = stringResource(id = it.second),
+                        isSelected = isSelected.value,
+                        index = entryPairs.indexOf(it),
+                        groupSize = groupSize
                     ) {
                         selected = it.first
                     }
                 }
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
@@ -193,7 +197,7 @@ fun LongSelectionPrefDialogUI(
                         mutableStateOf(selected == it.first)
                     }
                     SingleSelectionListItem(
-                        text = it.second,
+                        title = it.second,
                         isSelected = isSelected.value
                     ) {
                         selected = it.first
@@ -241,7 +245,7 @@ fun StringSelectionPrefDialogUI(
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
@@ -251,20 +255,30 @@ fun StringSelectionPrefDialogUI(
             Text(text = stringResource(pref.titleId), style = MaterialTheme.typography.titleLarge)
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 8.dp)
-                    .weight(1f, false)
                     .blockShadow()
+                    .padding(all = 8.dp)
+                    .weight(1f, false),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+                val groupSize = entryPairs.size
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 items(items = entryPairs) {
                     val isSelected = rememberSaveable(selected) {
                         mutableStateOf(selected == it.first)
                     }
                     SingleSelectionListItem(
-                        text = it.second,
-                        isSelected = isSelected.value
+                        title = it.second,
+                        isSelected = isSelected.value,
+                        index = entryPairs.indexOf(it),
+                        groupSize = groupSize
                     ) {
                         selected = it.first
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
@@ -308,7 +322,7 @@ fun StringMultiSelectionPrefDialogUI(
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
@@ -318,11 +332,15 @@ fun StringMultiSelectionPrefDialogUI(
             Text(text = stringResource(pref.titleId), style = MaterialTheme.typography.titleLarge)
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 8.dp)
-                    .weight(1f, false)
-                    .blockShadow(),
+                    .blockShadow()
+                    .padding(start = 8.dp, end = 8.dp)
+                    .weight(1f, false),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 val groupSize = entryPairs.size
                 itemsIndexed(items = entryPairs) { index, item ->
                     val isSelected = rememberSaveable(selected) {
@@ -340,6 +358,10 @@ fun StringMultiSelectionPrefDialogUI(
                         selected = if (it) selected.plus(item.first)
                         else selected.minus(item.first)
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 

@@ -25,11 +25,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.palette.graphics.Palette
+import com.android.launcher3.icons.ColorExtractor
+import com.android.launcher3.icons.R
 
-class IconPreferences(context: Context) {
+class IconPreferences(val context: Context) {
     private var prefs: SharedPreferences =
         context.getSharedPreferences("com.android.launcher3.prefs", Context.MODE_PRIVATE)
 
@@ -43,22 +44,24 @@ class IconPreferences(context: Context) {
     fun coloredIconBackground(): Boolean {
         return prefs.getBoolean("profile_icon_colored_background", false)
     }
-
-    fun getWrapperBackgroundColor(icon: Drawable): Int {
-        val lightness = prefs.getFloat("pref_icon_background_lightness", 1f)
-        val palette = Palette.Builder(drawableToBitmap(icon)).generate()
-        val dominantColor = palette.getDominantColor(Color.WHITE)
-        return setLightness(dominantColor, lightness)
+    fun accentColor(): Int {
+        val res = context.resources
+        return prefs.getInt(
+            "profile_accent_color",
+            res.getColor(R.color.themed_icon_background_color)
+        )
     }
-
-    private fun setLightness(color: Int, lightness: Float): Int {
-        if (color == Color.WHITE) {
-            return color
+    fun getWrapperBackgroundColor(icon: Drawable): Int {
+        if (!coloredIconBackground()) {
+            return Color.WHITE
         }
-        val outHsl = floatArrayOf(0f, 0f, 0f)
-        ColorUtils.colorToHSL(color, outHsl)
-        outHsl[2] = lightness
-        return ColorUtils.HSLToColor(outHsl)
+        val bitmap = drawableToBitmap(icon)
+        val extractedColor = ColorExtractor.findDominantColorByHue(bitmap)
+        if (extractedColor != -0x1000000 && Color.alpha(extractedColor) != 0) {
+            return extractedColor
+        }
+        val palette = Palette.Builder(bitmap).generate()
+        return palette.getDominantColor(Color.WHITE)
     }
 }
 

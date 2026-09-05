@@ -257,12 +257,13 @@ fun DynamicPage(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
+        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        itemsIndexed(dynamicColors) { _, option ->
+        val colorSize = dynamicColors.size
+        itemsIndexed(dynamicColors) { index, option ->
             SingleSelectionListItem(
-                text = stringResource(id = option.displayName),
+                title = stringResource(id = option.displayName),
                 isSelected = isColorSelected(option.toString()),
                 endWidget = {
                     ColorItem(
@@ -274,7 +275,9 @@ fun DynamicPage(
                 },
                 onClick = {
                     onSelectColor(option.toString())
-                }
+                },
+                index = index,
+                groupSize = colorSize
             )
         }
     }

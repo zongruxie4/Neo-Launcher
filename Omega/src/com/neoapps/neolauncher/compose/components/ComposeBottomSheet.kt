@@ -137,6 +137,11 @@ class ComposeBottomSheet(context: Context, attrs: AttributeSet? = null) :
         setTranslationShift(mTranslationShift)
     }
 
+    override fun setTranslationShift(translationShift: Float) {
+        super.setTranslationShift(translationShift)
+        updateContentShift()
+    }
+
     @Composable
     private fun ContentWrapper(
         contentPaddings: PaddingValues = PaddingValues(all = 0.dp),

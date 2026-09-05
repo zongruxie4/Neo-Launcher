@@ -285,6 +285,12 @@ open class StringMultiSelectionPref(
         }
     }
 
+    override fun getValue(): Set<String> {
+        return runBlocking(Dispatchers.IO) {
+            get().firstOrNull() ?: defaultValue
+        }
+    }
+
     fun getAll(): List<String> = valueList
 
     fun setAll(value: List<String>) {
@@ -318,6 +324,17 @@ open class StringPref(
     val onClick: (() -> Unit)? = null,
     onChange: (String) -> Unit = {},
 ) : PrefDelegate<String>(titleId, summaryId, dataStore, key, defaultValue, onChange)
+
+class TwoStatePref(
+    @StringRes titleId: Int,
+    @StringRes summaryId: Int = -1,
+    dataStore: DataStore<Preferences>,
+    key: Preferences.Key<Boolean>,
+    val navRoute: NavRoute,
+    val defaultValue: Boolean = false,
+    val confirmAction: ((Context, Boolean, Runnable) -> Unit)? = null,
+    onChange: (Boolean) -> Unit = {}
+) : PrefDelegate<Boolean>(titleId, summaryId, dataStore, key, defaultValue, onChange)
 
 abstract class MutableMapPref<K, V>(
     context: Context,
@@ -395,7 +412,7 @@ abstract class PrefDelegate<T : Any>(
     private val defaultValue: T,
     val onChange: (T) -> Unit
 ) {
-    fun getValue(): T {
+    open fun getValue(): T {
         return runBlocking(Dispatchers.IO) {
             get().firstOrNull() ?: defaultValue
         }

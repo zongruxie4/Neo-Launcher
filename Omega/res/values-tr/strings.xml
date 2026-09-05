@@ -16,7 +16,6 @@
     <string name="title_desktop_full_width_widgets">Tam genişlikte widget\'lar</string>
     <string name="allow_rotation_blocked_desc">Geçerli görüntü ayarı döndürmeye izin vermiyor</string>
     <string name="pref_category__inputs">Hareketler ve Arama</string>
-    <string name="summary__general_advanced">Dil, yedek, ayar arama</string>
     <string name="summary__general_notifications">Rozet sayısı, rozet rengi, hareketler</string>
     <string name="summary__general_search">Arama Sağlayıcısı, stil, simgeler</string>
     <string name="summary__general_theme">Renkleri değiştir, simge paketi, simge şekli</string>
@@ -24,7 +23,6 @@
     <string name="summary__general_desktop">Masaüstünü özelleştir</string>
     <string name="title__general_notifications">Hareketler ve Bildirimler</string>
     <string name="title__general_advanced">Gelişmiş Ayarlar</string>
-    <string name="title__general_search">Arama ve Klasörler</string>
     <string name="title__general_theme">Tema</string>
     <string name="title__general_drawer">Çekmece</string>
     <string name="title__general_dock">Alt panel</string>
@@ -250,7 +248,7 @@
     <string name="title__drawer_paged_apps">Sayfalı Uygulamalar görünümü</string>
     <string name="title_separate_work_apps">İş Uygulamaları için İkinci Sekme</string>
     <string name="title__drawer_all_apps">Tüm Uygulamaları Göster etiketi</string>
-    <string name="title__dock_hide">Alt Paneli Gizle</string>
+    <string name="title__dock_hide">Alt Panel Etkin</string>
     <string name="title__dock_scale">Alt panel ölçeği</string>
     <string name="title__theme_blur_radius">Bulanıklık Yoğunluğu</string>
     <string name="title__theme_blur">Bulanık</string>
@@ -544,4 +542,18 @@
     <string name="trust_apps_message">Korumalı uygulamalara erişim için kimlik doğrulama gereklidir</string>
     <string name="title_enable_feed">Beslemeyi Etkinleştir</string>
     <string name="title__about_acknowledgement">Teşekkürler</string>
+    <string name="title_show_icon_shadow">Simge Gölgesini Göster</string>
+    <string name="summary_show_icon_shadow">Uyarlanamayan simgeler için gölge göster.</string>
+    <string name="folder_full_screen">Klasörü tam ekranda aç</string>
+    <string name="backup_create">Yedekleme oluştur</string>
+    <string name="backup_restore">Yedeklemeyi geri yükle</string>
+    <string name="backup_databases">Veri tabanları</string>
+    <string name="backup_created">Yedekleme oluşturuldu</string>
+    <string name="backup_manage_storage_permission_title">Tüm dosyalar erişimi gerekli</string>
+    <string name="backup_manage_storage_permission_summary">Yedeklemeleri oluşturmadan önce Harici Depolama Yönetimi erişimine izin verin. Ayarlar menüsünden geri döndüğünüzde, başlatıcı bu durumu otomatik yenileyecektir.</string>
+    <string name="backup_grant_storage_permission">Depolama erişimi ver</string>
+    <string name="folder_icon_shape">Klasör simge şekli</string>
+    <string name="title_enable_folders">Çekmecede klasörleri etkinleştir</string>
+    <string name="title_manage_folders">Klasörleri Yönet</string>
+    <string name="summary_manage_folders">Klasör oluştur veya düzenle</string>
 </resources>

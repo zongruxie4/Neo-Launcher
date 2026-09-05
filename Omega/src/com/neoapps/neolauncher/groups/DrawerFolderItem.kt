@@ -23,7 +23,7 @@ import com.android.launcher3.R
 import com.android.launcher3.folder.FolderIcon
 import com.neoapps.neolauncher.groups.category.DrawerFolderInfo
 
-class DrawerFolderItem(private val info: DrawerFolderInfo) {
+class DrawerFolderItem(val info: DrawerFolderInfo) {
 
     private var icon: FolderIcon? = null
 

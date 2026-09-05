@@ -1210,7 +1210,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         final int halfScreenSize = getMeasuredWidth() / 2;
         int delta = screenCenter - (getScrollForPage(page) + halfScreenSize);
         int panelCount = getPanelCount();
-        int pageCount = getChildCount();
+        int pageCount = getPageCount();
 
         int adjacentPage = page + panelCount;
         if ((delta < 0 && !mIsRtl) || (delta > 0 && mIsRtl)) {

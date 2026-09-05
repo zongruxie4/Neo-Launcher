@@ -40,7 +40,7 @@ import com.android.launcher3.icons.BitmapInfo.Companion.LOW_RES_INFO
 import com.android.launcher3.icons.BitmapInfo.DrawableCreationFlags
 import com.android.launcher3.icons.FastBitmapDrawableDelegate.DelegateFactory
 import com.android.launcher3.icons.FastBitmapDrawableDelegate.SimpleDelegateFactory
-import com.android.launcher3.icons.mono.ThemedIconDrawable.Companion.FULLY_OPAQUE
+import com.android.launcher3.icons.mono.ThemedIconDelegate.Companion.FULLY_OPAQUE
 import kotlin.math.roundToInt
 
 

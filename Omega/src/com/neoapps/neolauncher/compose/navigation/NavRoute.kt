@@ -13,19 +13,22 @@ open class NavRoute : Parcelable {
     @Serializable
     open class Profile : NavRoute() {
         @Serializable
-        class IconShape : Profile()
+        data class IconShape(val shapeOption: String = "icon") : Profile()
 
         @Serializable
         class AccentColor : Profile()
     }
-
     @Serializable
     open class Desktop : NavRoute() {
+    }
+
+    @Serializable
+    open class Folder : NavRoute() {
         @Serializable
-        class FolderBG : Desktop()
+        class FolderBG : Folder()
 
         @Serializable
-        class FolderStroke : Desktop()
+        class FolderStroke : Folder()
     }
 
     @Serializable
@@ -47,6 +50,9 @@ open class NavRoute : Parcelable {
 
         @Serializable
         class Categorize : Drawer()
+
+        @Serializable
+        class Folders : Drawer()
 
         @Serializable
         class BG : Drawer()

@@ -10,7 +10,6 @@
     <string name="title__general_about">Tentang</string>
     <string name="default_folder_name">Folder Baru</string>
     <string name="title__general_dock">Dock</string>
-    <string name="title__general_search">Cari dan Folder</string>
     <string name="title__general_notifications">Gerakan dan Notifikasi</string>
     <string name="title__general_smartspace">Widget Rumah</string>
     <string name="title__general_search_feed">Cari &amp; Umpan</string>
@@ -22,7 +21,6 @@
     <string name="summary__general_search">Cari Penyedia, gaya, ikon</string>
     <string name="summary__general_smartspace">Tanggal, waktu, widget beranda</string>
     <string name="summary__general_notifications">Jumlah lencana, warna lencana, gestur</string>
-    <string name="summary__general_advanced">Bahasa, cadangan, pengaturan pencarian</string>
     <string name="pref_category__interfaces">Antarmuka Pengguna</string>
     <string name="pref_category__features">Fitur</string>
     <string name="pref_category__inputs">Gestur dan Pencarian</string>
@@ -67,7 +65,7 @@
     <string name="title__sort_alphabetical_az">A→Z</string>
     <string name="title__dock_show_arrow">Tampilkan Panah</string>
     <string name="title__dock_scale">Skala Dock</string>
-    <string name="title__dock_hide">Sembunyikan Dock</string>
+    <string name="title__dock_hide">Dock Diaktifkan</string>
     <string name="title__drawer_categorization">Kategori</string>
     <string name="title_expandable_dock">Dock yang Dapat Diperluas</string>
     <string name="title_dock_search">Bilah pencarian dock</string>
@@ -184,7 +182,7 @@
     <string name="hotseat_prediction_content_description">Aplikasi yang diprediksi: <xliff:g id="title" example="Chrome">%1$s</xliff:g></string>
     <string name="hotseat_tip_gaps_filled">Saran aplikasi ditambahkan ke ruang kosong</string>
     <string name="title_app_suggestions">Saran aplikasi</string>
-    <string name="title_desktop_cycle_scrolling">Gulir Melingkar</string>
+    <string name="title_desktop_cycle_scrolling">Gulir Siklus</string>
     <string name="title_manage_tabs">Kelola Tab</string>
     <string name="summary_manage_tabs">Buat atau edit Tab</string>
     <string name="title_drawer_tabs">Tab Horizontal</string>
@@ -542,4 +540,31 @@
     <string name="search_provider_search_url">URL Pencarian</string>
     <string name="search_provider_suggestion_url">URL Saran</string>
     <string name="search_provider_url_hint">Gunakan %s sebagai pengganti kata kunci pencarian</string>
+    <string name="title_general_folder">Folder</string>
+    <string name="set_as_home_screen">Atur sebagai Layar Utama</string>
+    <string name="default_home_screen">Layar Utama</string>
+    <string name="home_screen_set_toast">Layar utama diatur</string>
+    <string name="remove_page">Hapus Halaman</string>
+    <string name="move_page_left">Pindahkan halaman ke kiri</string>
+    <string name="move_page_right">Pindahkan halaman ke kanan</string>
+    <string name="folder_icon_shape">Bentuk ikon folder</string>
+    <string name="pref_title_folder">Sesuaikan Folder</string>
+    <string name="pref_title_general">Umum</string>
+    <string name="folder_full_screen">Buka folder dalam layar penuh</string>
+    <string name="title_dock_bottom_padding">Padding bawah dock</string>
+    <string name="title_enable_folders">Aktifkan folder di laci</string>
+    <string name="title_manage_folders">Kelola Folder</string>
+    <string name="summary_manage_folders">Buat atau edit Folder</string>
+    <string name="title_show_icon_shadow">Tampilkan Bayangan Ikon</string>
+    <string name="summary_show_icon_shadow">Tampilkan bayangan untuk ikon non-adaptif.</string>
+    <string name="permission_grant">Izinkan</string>
+    <string name="permission_wallpaper_title">Akses Wallpaper</string>
+    <string name="permission_wallpaper_message">Neo Launcher memerlukan akses ke wallpaper Anda untuk menerapkan efek buram. Tanpa izin ini, latar belakang buram akan dinonaktifkan.</string>
+    <string name="backup_create">Buat cadangan</string>
+    <string name="backup_restore">Pulihkan cadangan</string>
+    <string name="backup_databases">Basis data</string>
+    <string name="backup_created">Cadangan dibuat</string>
+    <string name="backup_manage_storage_permission_title">Diperlukan akses semua file</string>
+    <string name="backup_manage_storage_permission_summary">Berikan akses Kelola Penyimpanan Eksternal sebelum membuat cadangan. Peluncur akan menyegarkan status ini secara otomatis saat Anda kembali dari Pengaturan.</string>
+    <string name="backup_grant_storage_permission">Berikan akses penyimpanan</string>
 </resources>

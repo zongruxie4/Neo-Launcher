@@ -19,7 +19,13 @@
 package com.neoapps.neolauncher.folder
 
 
+import android.app.Activity
+import android.content.ComponentName
+import android.os.Process
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +33,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -39,69 +52,94 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.android.launcher3.Launcher
-import com.android.launcher3.LauncherAppState
 import com.android.launcher3.R
+import com.android.launcher3.folder.Folder
 import com.android.launcher3.model.data.FolderInfo
 import com.android.launcher3.model.data.ItemInfo
+import com.android.launcher3.util.ComponentKey
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.neoapps.neolauncher.compose.components.ComposeSwitchView
+import com.neoapps.neolauncher.compose.navigation.Routes
+import com.neoapps.neolauncher.preferences.PreferenceActivity
 
 @Composable
 fun CustomizeFolderSheet(
     launcher: Launcher,
-    folder: FolderInfo,
+    folderInfo: FolderInfo,
+    folder: Folder,
     onClose: () -> Unit,
 ) {
     val context = LocalContext.current
 
     val infoProvider: CustomInfoProvider<ItemInfo> =
-        CustomInfoProvider.forItem(context, folder)
+        CustomInfoProvider.forItem(context, folderInfo)
 
     var title by remember { mutableStateOf("") }
     val defaultTitle by remember { mutableStateOf("") }
 
     DisposableEffect(key1 = null) {
-        title = folder.title?.toString() ?: defaultTitle
+        title = folderInfo.title?.toString() ?: defaultTitle
         onDispose {
-            val previousTitle = infoProvider.getCustomTitle(folder)
+            val previousTitle = infoProvider.getCustomTitle(folderInfo)
             val newTitle = if (title != defaultTitle) title else null
             if (newTitle != previousTitle) {
-                //folder.setTitle(newTitle)
+                folderInfo.setTitle(newTitle, launcher.modelWriter)
+                folder.folderIcon.onTitleChanged(newTitle)
             }
-            val model = LauncherAppState.getInstance(context).model
-            /*model.onPackageChanged(
-                folder.toComponentKey().componentName.toString(),
-                folder.toComponentKey().user
-            )*/
         }
     }
 
     CustomizeFolderView(
         launcher = launcher,
-        folder = folder,
+        folderInfo = folderInfo,
         title = title,
         onTitleChange = { title = it },
-        defaultTitle = defaultTitle,
+        defaultTitle = "",
+        onClose = onClose,
     )
 }
 
 @Composable
 fun CustomizeFolderView(
     launcher: Launcher,
-    folder: FolderInfo,
+    folderInfo: FolderInfo,
     title: String,
     onTitleChange: (String) -> Unit,
     defaultTitle: String,
+    onClose: () -> Unit = {},
 ) {
-    //val keyboardController = LocalSoftwareKeyboardController.current
-    val coverMode = remember { mutableStateOf(folder.isCoverMode) }
-    /*val swipeUpHandler = createGestureHandler(
-        launcher, folder.swipeUpAction, BlankGestureHandler(launcher, null)
-    )
-    val handlerName = remember { mutableStateOf(swipeUpHandler.displayName) }*/
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+    val coverMode = remember { mutableStateOf(folderInfo.isCoverMode) }
+
+    val folderComponentKey = remember(folderInfo.id) {
+        ComponentKey(
+            ComponentName(context.packageName, "folder_${folderInfo.id}"),
+            Process.myUserHandle()
+        )
+    }
+
+    val folderIcon = remember { mutableStateOf(folderInfo.getIcon(launcher)) }
+    val editIconLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            folderIcon.value = folderInfo.getIcon(launcher)
+            onClose()
+        }
+    }
+
+    val openEditIcon = {
+        editIconLauncher.launch(
+            PreferenceActivity.navigateIntent(context, "${Routes.EDIT_ICON}/$folderComponentKey")
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -118,18 +156,19 @@ fun CustomizeFolderView(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(vertical = 16.dp)
-                .clip(MaterialTheme.shapes.small)
+                .padding(all = 16.dp)
+                .clip(MaterialTheme.shapes.medium)
+                .clickable(onClick = openEditIcon)
         ) {
             Image(
-                painter = rememberDrawablePainter(folder.getIcon(launcher)),
+                painter = rememberDrawablePainter(folderIcon.value),
                 contentDescription = title,
                 modifier = Modifier
                     .requiredSize(64.dp)
             )
         }
 
-        /*OutlinedTextField(
+        OutlinedTextField(
             value = title,
             onValueChange = onTitleChange,
             modifier = Modifier
@@ -161,7 +200,7 @@ fun CustomizeFolderView(
             shape = MaterialTheme.shapes.large,
             label = { Text(text = stringResource(id = R.string.folder_name)) },
             isError = title.isEmpty()
-        )*/
+        )
 
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -169,34 +208,14 @@ fun CustomizeFolderView(
             ComposeSwitchView(
                 title = stringResource(R.string.folder_cover_mode),
                 summary = stringResource(R.string.folder_cover_mode_desc),
-                isChecked = folder.isCoverMode,
+                isChecked = folderInfo.isCoverMode,
                 index = 0,
                 groupSize = 1,
                 onChange = { newValue ->
-                    folder.setCoverMode(newValue, launcher.modelWriter)
+                    folderInfo.setCoverMode(newValue, launcher.modelWriter)
                     coverMode.value = newValue
                 }
             )
-
-            /*val openDialogCustom = remember { mutableStateOf(false) }
-            PreferenceItem(
-                title = stringResource(R.string.gesture_swipe_up),
-                summary = handlerName.value,
-                isEnabled = !coverMode.value,
-                index = 1,
-                groupSize = 2,
-                onClick = { openDialogCustom.value = true }
-            )
-            if (openDialogCustom.value) {
-                FolderListDialog(
-                    folder = folder,
-                    openDialogCustom = openDialogCustom,
-                    currentGesture = swipeUpHandler,
-                    onClose = {
-                        handlerName.value = it.displayName
-                    }
-                )
-            }*/
         }
     }
 }

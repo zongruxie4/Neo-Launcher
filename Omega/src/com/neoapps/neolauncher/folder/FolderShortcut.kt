@@ -19,15 +19,17 @@
 package com.neoapps.neolauncher.folder
 
 import com.android.launcher3.Launcher
+import com.android.launcher3.folder.Folder
 import com.android.launcher3.model.data.FolderInfo
 import com.neoapps.neolauncher.compose.components.ComposeBottomSheet
 
-class FolderShortcut(val launcher: Launcher, val folderInfo: FolderInfo) {
+class FolderShortcut(val launcher: Launcher, val folderInfo: FolderInfo, val folder: Folder) {
     fun show() {
         ComposeBottomSheet.show(launcher) {
             CustomizeFolderSheet(
                 launcher = launcher,
-                folder = folderInfo,
+                folderInfo = folderInfo,
+                folder = folder,
                 onClose = { close(true) }
             )
         }

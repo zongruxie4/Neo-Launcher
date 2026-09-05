@@ -1,0 +1,53 @@
+# generated at Sat Aug  8 12:55:44 2026 using merge.py
+# format: flowerpot-1 (azalea)
+# specs: https://del.dog/flowerpot
+$1
+# STATIC TEMPLATE
+&category|image
+:android.intent.category.APP_GALLERY
+:android.intent.category.CAMERA
+# PHOTOGRAPHY
+com.accordion.pro.camera
+photocreation.camera.blurcamera
+ai.hailuo.video
+com.photo.android.camera
+com.pixverseai.pixverse
+com.sensemobile.action
+com.commsource.beautyplus
+com.tickettothemoon.persona
+photo.selfie.beauty.hd.camera
+com.photoroom.app
+com.adobe.lrmobile
+photocollage.photoeditor.collagemaker
+com.risingcabbage.hd.camera
+com.google.android.apps.photosgo
+free.ai.photo.generator.collart.ai
+com.picsart.studio
+photo.editor.photoeditor.photoeditorpro
+io.faceapp
+com.mt.mtxx.mtxx
+com.ai.polyverse.mirror
+com.google.android.apps.photos
+com.cerdillac.proccd
+com.lyrebirdstudio.cartoon
+com.meitu.meiyancamera
+com.cutestudio.photomixer
+com.accordion.analogcam
+com.lyrebirdstudio.facelab
+ai.photo.enhancer.photoclear
+com.bigwinepot.nwdn.international
+com.niksoftware.snapseed
+com.camerasideas.instashot
+photo.selfie.sweet.effect.camera
+com.linecorp.b612.android
+com.xt.retouchoversea
+com.adobe.psmobile
+photoeditor.layout.collagemaker
+com.ai.gallery.android
+com.vsco.cam
+com.cyberlink.youcammakeup
+photo.camera.beauty.hd.camera
+com.lyrebirdstudio.montagenscolagem
+vsin.t16_funny_photo
+com.prequel.app
+com.photogrid.collage.videomaker

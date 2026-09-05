@@ -45,7 +45,7 @@ data class IconShape(
                 AdaptiveIconDrawable(ColorDrawable(Color.WHITE), null)
                     .apply { setBounds(0, 0, DEFAULT_PATH_SIZE, DEFAULT_PATH_SIZE) }
                     .iconMask,
-                createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply { eraseColor(Color.WHITE) },
+                createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply { eraseColor(Color.TRANSPARENT) },
             )
     }
 }

@@ -21,13 +21,16 @@ package com.neoapps.neolauncher.preferences
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.core.graphics.ColorUtils
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.android.launcher3.InvariantDeviceProfile.INDEX_DEFAULT
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
@@ -38,7 +41,6 @@ import com.android.launcher3.notification.NotificationListener
 import com.android.launcher3.settings.SettingsActivity
 import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.SettingsCache
-import com.android.launcher3.util.Themes
 import com.neoapps.neolauncher.DeviceProfileOverrides
 import com.neoapps.neolauncher.compose.navigation.NavRoute
 import com.neoapps.neolauncher.compose.views.IconShapeIcon
@@ -67,6 +69,7 @@ import com.neoapps.neolauncher.smartspace.provider.BatteryStatusProvider
 import com.neoapps.neolauncher.smartspace.provider.NowPlayingProvider
 import com.neoapps.neolauncher.smartspace.weather.GoogleWeatherProvider
 import com.neoapps.neolauncher.smartspace.weather.OWMWeatherProvider
+import com.neoapps.neolauncher.theme.AccentColorOption
 import com.neoapps.neolauncher.util.Config
 import com.neoapps.neolauncher.util.CustomPreferencesMigration
 import com.neoapps.neolauncher.util.getFeedProviders
@@ -145,6 +148,11 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.PROFILE_ACCENT_COLOR,
         defaultValue = "system_accent",
         navRoute = NavRoute.Profile.AccentColor(),
+        onChange = {
+            var color = AccentColorOption.fromString(it).accentColor
+            val lighterColor = ColorUtils.blendARGB(color, Color.WHITE, 0.75f)
+            legacyPrefs.savePreference("profile_accent_color", lighterColor)
+        }
     )
 
     var profileIconShape = NavigationPref(
@@ -152,7 +160,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         key = PrefKey.PROFILE_ICON_SHAPE,
         defaultValue = "system",
-        navRoute = NavRoute.Profile.IconShape(),
+        navRoute = NavRoute.Profile.IconShape(shapeOption = "icon"),
         endIcon = {
             IconShapeIcon(
                 iconShape = IconShape.fromString(context, it)
@@ -185,6 +193,7 @@ class NeoPrefs private constructor(val context: Context) {
         defaultValue = Utilities.ATLEAST_T,
         onChange = {
             legacyPrefs.savePreference(KEY_THEMED_ICONS, it)
+            ThemeManager.INSTANCE.get(context).isMonoThemeEnabled = it
         }
     )
 
@@ -282,6 +291,20 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.PROFILE_ICON_RESET_CUSTOM
     )
 
+    var profilePopupMenu = StringMultiSelectionPref(
+        dataStore = dataStore,
+        key = PrefKey.PROFILE_POPUP_OPTIONS,
+        titleId = R.string.title_desktop_icon_popup_menu,
+        defaultValue = setOf(
+            Config.WALLPAPER_POPUP,
+            Config.WIDGETS_POPUP,
+            Config.ALL_APPS_POPUP,
+        ),
+        entries = Config.popupOptions,
+        withIcons = true,
+        onChange = { pokeChange() }
+    )
+
     // Desktop
     val desktopIconAddInstalled = BooleanPref(
         dataStore = dataStore,
@@ -323,12 +346,19 @@ class NeoPrefs private constructor(val context: Context) {
         defaultValue = false,
     )
 
-    // TODO fix this
     var desktopAllowEmptyScreens = BooleanPref(
         dataStore = dataStore,
         key = PrefKey.DESKTOP_EMPTY_SCREENS_ALLOW,
         titleId = R.string.title_desktop_keep_empty,
         defaultValue = false
+    )
+
+    /** Internal pref — persists empty screen IDs so they survive a launcher restart. */
+    var desktopEmptyScreenIds = StringPref(
+        dataStore = dataStore,
+        key = PrefKey.DESKTOP_EMPTY_SCREENS_IDS,
+        titleId = R.string.title_desktop_keep_empty,
+        defaultValue = "",
     )
 
     val desktopHideAppLabels = BooleanPref(
@@ -436,20 +466,18 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.DESKTOP_FOLDER_BG_CUSTOM,
         titleId = R.string.folder_custom_background,
         defaultValue = false,
-        onChange = { reloadGrid() },
+        onChange = {
+            reloadGrid()
+            pokeChange()
+        },
     )
 
     val desktopFolderBackgroundColor = ColorIntPref(
         titleId = R.string.folder_background,
         dataStore = dataStore,
         key = PrefKey.DESKTOP_FOLDER_BG_COLOR,
-        defaultValue = "custom|#${
-            Themes.getAttrColor(
-                context,
-                com.android.internal.R.attr.colorSurface
-            )
-        }",
-        navRoute = NavRoute.Desktop.FolderBG(),
+        defaultValue = "system_accent",
+        navRoute = NavRoute.Folder.FolderBG(),
         onChange = { reloadGrid() },
     )
 
@@ -458,48 +486,65 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.DESKTOP_FOLDER_STROKE,
         titleId = R.string.folder_draw_stroke,
         defaultValue = false,
-        onChange = { reloadGrid() },
+        onChange = {
+            reloadGrid()
+            pokeChange()
+        },
     )
 
     val desktopFolderStrokeColor = ColorIntPref(
         titleId = R.string.folder_stroke_color,
         dataStore = dataStore,
         key = PrefKey.DESKTOP_FOLDER_STROKE_COLOR,
-        defaultValue = "custom|#${
-            Themes.getAttrColor(
-                context,
-                com.google.android.material.R.attr.colorSurface
-            )
-        }",
-        navRoute = NavRoute.Desktop.FolderStroke(),
+        defaultValue = "system_accent",
+        navRoute = NavRoute.Folder.FolderStroke(),
         onChange = { reloadGrid() },
+    )
+
+    var desktopFolderIconShape = NavigationPref(
+        titleId = R.string.folder_icon_shape,
+        dataStore = dataStore,
+        key = PrefKey.FOLDER_ICON_SHAPE,
+        defaultValue = "system",
+        navRoute = NavRoute.Profile.IconShape(shapeOption = "folder"),
+        endIcon = {
+            IconShapeIcon(
+                iconShape = IconShape.fromString(context, it)
+            )
+        },
+        onChange = { }
     )
 
     val desktopFolderFullScreen = BooleanPref(
         dataStore = dataStore,
         key = PrefKey.DESKTOP_FOLDER_FULL_SCREEN,
         titleId = R.string.folder_full_screen,
-        defaultValue = false
+        defaultValue = false,
+        onChange = { reloadGrid() },
     )
 
-    val desktopFolderColumns = IntPref(
+    val desktopFolderColumns = IdpIntPref(
         dataStore = dataStore,
         key = PrefKey.DESKTOP_FOLDER_COLUMNS,
         titleId = R.string.folder_columns,
-        defaultValue = 4,
-        minValue = 2,
-        maxValue = 5,
+        selectDefaultValue = { if (numFolderColumns[INDEX_DEFAULT] == 0) 3 else numFolderColumns[INDEX_DEFAULT] },
+        defaultValue = 3,
+        minValue = 2f,
+        maxValue = 5f,
         steps = 2,
+        onChange = { reloadGrid() }
     )
 
-    val desktopFolderRows = IntPref(
+    val desktopFolderRows = IdpIntPref(
         dataStore = dataStore,
         key = PrefKey.DESKTOP_FOLDER_ROWS,
         titleId = R.string.folder_rows,
-        defaultValue = 4,
-        minValue = 2,
-        maxValue = 5,
+        selectDefaultValue = { if (numFolderRows[INDEX_DEFAULT] == 0) 3 else numFolderRows[INDEX_DEFAULT] },
+        defaultValue = 3,
+        minValue = 2f,
+        maxValue = 5f,
         steps = 2,
+        onChange = { reloadGrid() }
     )
 
     val desktopFolderOpacity = FloatPref(
@@ -540,6 +585,14 @@ class NeoPrefs private constructor(val context: Context) {
         onChange = { },
     )
 
+    val desktopDefaultPage = IntPref(
+        dataStore = dataStore,
+        key = PrefKey.DESKTOP_DEFAULT_PAGE,
+        titleId = R.string.default_home_screen,
+        defaultValue = 0,
+        onChange = { },
+    )
+
     // Dock
     var dockEnabled = BooleanPref(
         dataStore = dataStore,
@@ -573,6 +626,18 @@ class NeoPrefs private constructor(val context: Context) {
         defaultValue = 1f,
         maxValue = 1.75f,
         minValue = 0.70f,
+        steps = 100,
+        specialOutputs = { "${(it * 100).roundToInt()}%" },
+        onChange = { reloadGrid() }
+    )
+
+    var dockBottomPadding = FloatPref(
+        dataStore = dataStore,
+        key = PrefKey.DOCK_BOTTOM_PADDING,
+        titleId = R.string.title_dock_bottom_padding,
+        defaultValue = 1f,
+        minValue = 0.1f,
+        maxValue = 1.6f,
         steps = 100,
         specialOutputs = { "${(it * 100).roundToInt()}%" },
         onChange = { reloadGrid() }
@@ -673,11 +738,13 @@ class NeoPrefs private constructor(val context: Context) {
         reloadGrid()
     }
 
-    var drawerEnableProtectedApps = BooleanPref(
+    var drawerEnableProtectedApps = TwoStatePref(
         dataStore = dataStore,
         key = PrefKey.DRAWER_PROTECTED_APPS_ENABLED,
         titleId = R.string.enable_protected_apps,
+        summaryId = R.string.protected_apps,
         defaultValue = false,
+        navRoute = NavRoute.Drawer.ProtectedApps(),
         confirmAction = { context, newValue, successRunnable ->
             if (!newValue) {
                 Config.showLockScreen(
@@ -860,14 +927,6 @@ class NeoPrefs private constructor(val context: Context) {
         specialOutputs = { "${(it * 100).roundToInt()}%" }
     )
 
-    var drawerAppGroups = NavigationPref(
-        dataStore = dataStore,
-        key = PrefKey.DRAWER_CATEGORIZATION,
-        titleId = R.string.title_manage_tabs,
-        summaryId = R.string.summary_manage_tabs,
-        navRoute = NavRoute.Drawer.Categorize(),
-    )
-
     val drawerLayout = IntSelectionPref(
         dataStore = dataStore,
         key = PrefKey.DRAWER_LAYOUT,
@@ -897,6 +956,22 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title_manage_tabs,
         summaryId = R.string.summary_manage_tabs,
         navRoute = NavRoute.Drawer.Categorize(),
+    )
+
+    val drawerEnableFolders = BooleanPref(
+        dataStore = dataStore,
+        key = PrefKey.DRAWER_ENABLE_FOLDERS,
+        titleId = R.string.title_enable_folders,
+        defaultValue = false
+    )
+
+    var drawerFolderManager = TwoStatePref(
+        dataStore = dataStore,
+        key = PrefKey.DRAWER_ENABLE_FOLDERS,
+        defaultValue = true,
+        titleId = R.string.title_enable_folders,
+        summaryId = R.string.summary_manage_folders,
+        navRoute = NavRoute.Drawer.Folders(),
     )
 
     // Notifications & Widgets/Smartspace

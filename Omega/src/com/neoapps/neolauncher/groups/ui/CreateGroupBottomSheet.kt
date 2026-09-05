@@ -73,7 +73,6 @@ import com.neoapps.neolauncher.groups.category.FlowerpotTabs.Companion.KEY_FLOWE
 import com.neoapps.neolauncher.preferences.NeoPrefs
 import com.neoapps.neolauncher.theme.AccentColorOption
 import com.neoapps.neolauncher.util.Config
-import kotlinx.coroutines.launch
 
 @Composable
 fun CreateGroupBottomSheet(
@@ -100,7 +99,7 @@ fun CreateGroupBottomSheet(
             FlowerpotTabs.FlowerpotTab(context)
         }
 
-        else -> { // AppGroupsManager.Category.FOLDER.key
+        else -> {
             DrawerFolders.CustomFolder(context)
         }
     }
@@ -115,7 +114,7 @@ fun CreateGroupBottomSheet(
     var selectedCategory by remember {
         mutableStateOf(
             AppGroups.StringCustomization(
-                FlowerpotTabs.KEY_FLOWERPOT, AppGroups.KEY_FLOWERPOT_DEFAULT
+                KEY_FLOWERPOT, AppGroups.KEY_FLOWERPOT_DEFAULT
             ).value ?: AppGroups.KEY_FLOWERPOT_DEFAULT
         )
     }
@@ -179,11 +178,18 @@ fun CreateGroupBottomSheet(
 
                 if (openDialog.value) {
                     BaseDialog(openDialogCustom = openDialog) {
-                        CategorySelectionDialogUI(selectedCategory = selectedCategory) {
-                            selectedCategory = it
-                            (config[KEY_FLOWERPOT] as? AppGroups.StringCustomization)?.value =
-                                it
-                            openDialog.value = false
+                        Card(
+                            shape = MaterialTheme.shapes.extraLarge,
+                            modifier = Modifier.padding(8.dp),
+                            elevation = CardDefaults.elevatedCardElevation(8.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+                        ) {
+                            FlowerpotCategoryPage(selectedCategory = selectedCategory) {
+                                selectedCategory = it
+                                (config[KEY_FLOWERPOT] as? AppGroups.StringCustomization)?.value =
+                                    it
+                                openDialog.value = false
+                            }
                         }
                     }
                 }
@@ -236,30 +242,32 @@ fun CreateGroupBottomSheet(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            BasePreference(
-                titleId = R.string.tab_hide_from_main,
-                startWidget = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.tab_hide_from_main),
-                        contentDescription = null,
-                    )
-                },
-                endWidget = {
-                    Switch(
-                        modifier = Modifier
-                            .height(24.dp),
-                        checked = isHidden,
-                        onCheckedChange = {
-                            isHidden = it
-                        }
-                    )
-                },
-                onClick = { isHidden = !isHidden },
-                index = 1,
-                groupSize = if (category != AppGroupsManager.Category.FOLDER) 3
-                else 2
-            )
+            if (category != AppGroupsManager.Category.FLOWERPOT) {
+                Spacer(modifier = Modifier.height(4.dp))
+                BasePreference(
+                    titleId = R.string.tab_hide_from_main,
+                    startWidget = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.tab_hide_from_main),
+                            contentDescription = null,
+                        )
+                    },
+                    endWidget = {
+                        Switch(
+                            modifier = Modifier
+                                .height(24.dp),
+                            checked = isHidden,
+                            onCheckedChange = {
+                                isHidden = it
+                            }
+                        )
+                    },
+                    onClick = { isHidden = !isHidden },
+                    index = 1,
+                    groupSize = if (category != AppGroupsManager.Category.FOLDER) 3
+                    else 2
+                )
+            }
             if (category != AppGroupsManager.Category.FOLDER) {
                 Spacer(modifier = Modifier.height(4.dp))
                 BasePreference(
@@ -315,43 +323,41 @@ fun CreateGroupBottomSheet(
                     cornerRadius = cornerRadius,
                     textId = R.string.tab_bottom_sheet_save,
                     onClick = {
-                        coroutineScope.launch {
-                            (config[AppGroups.KEY_TITLE] as? AppGroups.StringCustomization)?.value =
-                                title
-                            if (category != AppGroupsManager.Category.FLOWERPOT) {
-                                (config[AppGroups.KEY_HIDE_FROM_ALL_APPS] as? AppGroups.BooleanCustomization)?.value =
-                                    isHidden
-                                (config[AppGroups.KEY_ITEMS] as? AppGroups.ComponentsCustomization)?.value =
-                                    selectedApps.toMutableSet()
-                            } else {
-                                (config[KEY_FLOWERPOT] as? AppGroups.StringCustomization)?.value =
-                                    selectedCategory
-                            }
-                            if (category != AppGroupsManager.Category.FOLDER) {
-                                (config[AppGroups.KEY_COLOR] as? AppGroups.StringCustomization)?.value =
-                                    color
-                            }
-                            group.customizations.applyFrom(config)
-                            group.title = title
-                            when (category) {
-                                AppGroupsManager.Category.FOLDER -> {
-                                    prefs.drawerFolders.apply {
-                                        addGroup(group as DrawerFolders.Folder)
-                                        saveToJson()
-                                    }
+                        (config[AppGroups.KEY_TITLE] as? AppGroups.StringCustomization)?.value =
+                            title
+                        if (category != AppGroupsManager.Category.FLOWERPOT) {
+                            (config[AppGroups.KEY_HIDE_FROM_ALL_APPS] as? AppGroups.BooleanCustomization)?.value =
+                                isHidden
+                            (config[AppGroups.KEY_ITEMS] as? AppGroups.ComponentsCustomization)?.value =
+                                selectedApps.toMutableSet()
+                        } else {
+                            (config[KEY_FLOWERPOT] as? AppGroups.StringCustomization)?.value =
+                                selectedCategory
+                        }
+                        if (category != AppGroupsManager.Category.FOLDER) {
+                            (config[AppGroups.KEY_COLOR] as? AppGroups.StringCustomization)?.value =
+                                color
+                        }
+                        group.customizations.applyFrom(config)
+                        group.title = title
+                        when (category) {
+                            AppGroupsManager.Category.FOLDER -> {
+                                prefs.drawerFolders.apply {
+                                    addGroup(group as DrawerFolders.Folder)
+                                    saveToJson()
                                 }
-
-                                AppGroupsManager.Category.TAB,
-                                AppGroupsManager.Category.FLOWERPOT,
-                                                                 -> {
-                                    prefs.drawerTabs.apply {
-                                        addGroup(group as DrawerTabs.Tab)
-                                        saveToJson()
-                                    }
-                                }
-
-                                else                             -> {}
                             }
+
+                            AppGroupsManager.Category.TAB,
+                            AppGroupsManager.Category.FLOWERPOT,
+                                -> {
+                                prefs.drawerTabs.apply {
+                                    addGroup(group as DrawerTabs.Tab)
+                                    saveToJson()
+                                }
+                            }
+
+                            else -> {}
                         }
                         onClose(Config.BS_SELECT_TAB_TYPE)
                     }

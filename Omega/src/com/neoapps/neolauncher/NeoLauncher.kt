@@ -53,9 +53,12 @@ import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDIC
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_WIDGETS_PREDICTION
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT
+import com.android.launcher3.LauncherState
 import com.android.launcher3.LauncherState.ALL_APPS
+import com.android.launcher3.LauncherState.EDIT_MODE
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import com.android.launcher3.WorkspaceLayoutManager.ADD_PAGE_SCREEN_ID
 import com.android.launcher3.appprediction.PredictionRowView
 import com.android.launcher3.hybridhotseat.HotseatPredictionController
 import com.android.launcher3.logging.InstanceId
@@ -71,7 +74,7 @@ import com.android.launcher3.util.RunnableList
 import com.android.launcher3.util.TouchController
 import com.android.launcher3.views.OptionsPopupView
 import com.android.systemui.plugins.shared.LauncherOverlayManager
-import com.neoapps.neolauncher.blur.BlurBackgroundView
+import com.neoapps.neolauncher.blur.WallpaperPermissionHelper
 import com.neoapps.neolauncher.gestures.GestureController
 import com.neoapps.neolauncher.gestures.VerticalSwipeGestureController
 import com.neoapps.neolauncher.preferences.NeoPrefs
@@ -80,8 +83,7 @@ import com.neoapps.neolauncher.shortcuts.OmegaShortcuts
 import com.neoapps.neolauncher.theme.ThemeManager
 import com.neoapps.neolauncher.theme.ThemeOverride
 import com.neoapps.neolauncher.util.Config
-import com.neoapps.neolauncher.util.Permissions
-import com.neoapps.neolauncher.util.hasStoragePermission
+import com.neoapps.neolauncher.util.hasWallpaperAccess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -100,7 +102,6 @@ class NeoLauncher : Launcher(), SavedStateRegistryOwner,
     val allApps = ArrayList<AppInfo>()
     private val hiddenApps = ArrayList<AppInfo>()
     val gestureController by lazy { GestureController(this) }
-    val background by lazy { findViewById<BlurBackgroundView>(R.id.blur_background)!! }
     private lateinit var themeOverride: ThemeOverride
     private val themeSet: ThemeOverride.ThemeSet get() = ThemeOverride.Settings()
     val optionsView by lazy { findViewById<OptionsPopupView<Launcher>>(R.id.options_view)!! }
@@ -116,12 +117,8 @@ class NeoLauncher : Launcher(), SavedStateRegistryOwner,
     private lateinit var mHotseatPredictionController: HotseatPredictionController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!this.hasStoragePermission) {
-            Permissions.requestPermission(
-                this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                Permissions.REQUEST_PERMISSION_STORAGE_ACCESS
-            )
+        if (!this.hasWallpaperAccess) {
+            WallpaperPermissionHelper.requestIfNeeded(this)
         }
 
         prefs.registerCallback(prefCallback)
@@ -146,8 +143,9 @@ class NeoLauncher : Launcher(), SavedStateRegistryOwner,
                     }
                 }
             }
-        }, null)
+        }, Handler(Looper.getMainLooper()))
 
+        NeoApp.instance?.onLauncherAppStateCreated()
         themeOverride = ThemeOverride(themeSet, this)
         themeOverride.applyTheme(this)
         currentAccent = prefs.profileAccentColor.getColor()
@@ -161,9 +159,127 @@ class NeoLauncher : Launcher(), SavedStateRegistryOwner,
         )
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == com.neoapps.neolauncher.util.Permissions.REQUEST_PERMISSION_WALLPAPER_ACCESS) {
+            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                com.neoapps.neolauncher.blur.BlurWallpaperProvider.getInstance(this).updateAsync()
+            }
+        }
+    }
+
     override fun setupViews() {
         super.setupViews()
-        mHotseatPredictionController = HotseatPredictionController(this);
+        mHotseatPredictionController = HotseatPredictionController(this)
+
+        val overview: ViewGroup? = getOverviewPanel()
+        val setHomeBtn = overview?.findViewById<View>(R.id.set_home_button)
+        setHomeBtn?.setOnClickListener {
+            val currentPage = workspace.currentPage
+            prefs.desktopDefaultPage.setValue(currentPage)
+            updateSetHomeButtonState()
+            android.widget.Toast.makeText(
+                this,
+                R.string.home_screen_set_toast,
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        val deletePageBtn = overview?.findViewById<View>(R.id.delete_page_button)
+        deletePageBtn?.setOnClickListener {
+            workspace?.removeCurrentPage()
+            updateSetHomeButtonState()
+        }
+
+        val moveLeftBtn = overview?.findViewById<View>(R.id.move_page_left_button)
+        moveLeftBtn?.setOnClickListener {
+            workspace?.moveCurrentPage(-1)
+            updateSetHomeButtonState()
+        }
+
+        val moveRightBtn = overview?.findViewById<View>(R.id.move_page_right_button)
+        moveRightBtn?.setOnClickListener {
+            workspace?.moveCurrentPage(1)
+            updateSetHomeButtonState()
+        }
+
+        workspace?.addPageSwitchListener {
+            updateSetHomeButtonState()
+        }
+    }
+
+    override fun onStateSetStart(state: LauncherState) {
+        super.onStateSetStart(state)
+        val overview: ViewGroup? = getOverviewPanel()
+        if (state == EDIT_MODE) {
+            overview?.visibility = View.VISIBLE
+            updateSetHomeButtonState()
+        } else {
+            overview?.visibility = View.GONE
+        }
+    }
+
+    fun updateSetHomeButtonState() {
+        val overview: ViewGroup = getOverviewPanel() ?: return
+        val setHomeBtn = overview.findViewById<View>(R.id.set_home_button) ?: return
+        val deletePageBtn = overview.findViewById<View>(R.id.delete_page_button)
+        val moveLeftBtn = overview.findViewById<View>(R.id.move_page_left_button)
+        val moveRightBtn = overview.findViewById<View>(R.id.move_page_right_button)
+
+        val currentPage = workspace?.currentPage ?: 0
+        val currentScreenId = workspace?.getScreenIdForPageIndex(currentPage) ?: -1
+
+        val isAddPageScreen = currentScreenId == ADD_PAGE_SCREEN_ID
+
+        if (isAddPageScreen) {
+            setHomeBtn.visibility = View.GONE
+            deletePageBtn?.visibility = View.GONE
+            moveLeftBtn?.visibility = View.GONE
+            moveRightBtn?.visibility = View.GONE
+            return
+        } else {
+            setHomeBtn.visibility = View.VISIBLE
+        }
+
+        val screenOrder = workspace?.screenOrder
+        var realScreenCount = 0
+        var currentRealIndex = -1
+        var realIdx = 0
+        if (screenOrder != null) {
+            for (i in 0 until screenOrder.size()) {
+                val id = screenOrder.get(i)
+                if (id != ADD_PAGE_SCREEN_ID) {
+                    if (i == currentPage) currentRealIndex = realIdx
+                    realIdx++
+                    realScreenCount++
+                }
+            }
+        }
+
+        deletePageBtn?.visibility = if (realScreenCount > 1) View.VISIBLE else View.GONE
+
+        moveLeftBtn?.visibility =
+            if (realScreenCount > 1 && currentRealIndex > 0) View.VISIBLE else View.GONE
+        moveRightBtn?.visibility =
+            if (realScreenCount > 1 && currentRealIndex < realScreenCount - 1) View.VISIBLE else View.GONE
+
+        val iconView = setHomeBtn.findViewById<android.widget.ImageView>(R.id.set_home_icon)
+        val textView = setHomeBtn.findViewById<android.widget.TextView>(R.id.set_home_text)
+        val defaultPage = prefs.desktopDefaultPage.getValue()
+
+        if (currentPage == defaultPage) {
+            iconView?.setImageResource(R.drawable.ic_home_page_filled)
+            textView?.setText(R.string.default_home_screen)
+            setHomeBtn.isSelected = true
+        } else {
+            iconView?.setImageResource(R.drawable.ic_home_page)
+            textView?.setText(R.string.set_as_home_screen)
+            setHomeBtn.isSelected = false
+        }
     }
 
     override fun bindPredictedContainerInfo(info: PredictedContainerInfo?) {
@@ -185,11 +301,6 @@ class NeoLauncher : Launcher(), SavedStateRegistryOwner,
             }
         }
     }
-
-    fun onItemPinnedFromContextMenu() {
-        mHotseatPredictionController.onItemPinnedFromContextMenu()
-    }
-
 
     override fun bindWorkspaceComponentsRemoved(matcher: Predicate<ItemInfo?>) {
         super.bindWorkspaceComponentsRemoved(matcher)

@@ -91,6 +91,7 @@ fun DrawerPrefsPage() {
                 /*
                 prefs.drawerAppGroups,
                 prefs.drawerCellHeightMultiplier,*/
+                prefs.drawerFolderManager,
                 prefs.drawerSaveScrollPosition,
                 prefs.drawerHideScrollbar
             ).toTypedArray()
@@ -102,11 +103,6 @@ fun DrawerPrefsPage() {
             *listOfNotNull(
                 prefs.drawerHiddenAppSet,
                 prefs.drawerEnableProtectedApps,
-                if (prefs.drawerEnableProtectedApps.getValue())
-                    prefs.drawerProtectedAppsSet
-                else {
-                    null
-                },
                 prefs.drawerCustomBackground,
                 if (prefs.drawerCustomBackground.getValue()) {
                     prefs.drawerBackgroundColor

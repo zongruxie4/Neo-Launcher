@@ -20,7 +20,6 @@
     <string name="default_folder_name">Nuova cartella</string>
     <string name="title__general_notifications">Gesti e Notifiche</string>
     <string name="title__general_advanced">Impostazioni avanzate</string>
-    <string name="title__general_search">Ricerca e Cartelle</string>
     <string name="title__general_theme">Tema</string>
     <string name="title__general_about">Informazioni</string>
     <string name="title__desktop_grid_size">Dimensione griglia</string>
@@ -30,7 +29,6 @@
     <string name="pref_category__interfaces">Interfaccia utente</string>
     <string name="pref_category__others">Altri</string>
     <string name="pref_category__inputs">Gesti e ricerca</string>
-    <string name="summary__general_advanced">Lingua, backup, impostazione ricerca</string>
     <string name="summary__general_notifications">Conteggio badge, colore badge, gesti</string>
     <string name="summary__general_smartspace">Data, ora, widget Home</string>
     <string name="summary__general_search">Provider di ricerca, stile, icone</string>
@@ -466,7 +464,7 @@
     <string name="cat_dock_search">Cassetto e barra app</string>
     <string name="title_desktop_widget_corner_radius">Raggio dell\'angolo del widget</string>
     <string name="title__drawer_rows">Numero di righe</string>
-    <string name="protected_apps">App protette</string>
+    <string name="protected_apps">Tocca per aprire le app protette</string>
     <string name="protected_app_selected">App protette (%1$d)</string>
     <string name="owm_get_your_own_key">Ottieni una chiave API su api.openweathermap.org.</string>
     <string name="contributor_role">Collaboratore</string>
@@ -559,8 +557,33 @@
     <string name="hotseat_prediction_content_description">App prevista: <xliff:g id="title" example="Chrome">%1$s</xliff:g></string>
     <string name="hotseat_tip_gaps_filled">Suggerimenti per app aggiunti allo spazio vuoto</string>
     <string name="title_app_suggestions">Suggerimenti per le app</string>
-    <string name="title_desktop_cycle_scrolling">Ciclo di scorrimento</string>
+    <string name="title_desktop_cycle_scrolling">Scorrimento ciclico</string>
     <string name="title_enable_feed">Abilita feed</string>
     <string name="title_show_icon_shadow">Mostra ombra icona</string>
     <string name="summary_show_icon_shadow">Mostra l\'ombra per le icone non adattive.</string>
+    <string name="folder_full_screen">Apri cartella a schermo intero</string>
+    <string name="backup_create">Crea backup</string>
+    <string name="backup_restore">Ripristina backup</string>
+    <string name="backup_databases">Database</string>
+    <string name="backup_created">Backup creato</string>
+    <string name="backup_manage_storage_permission_title">Accesso richiesto a tutti i file</string>
+    <string name="backup_manage_storage_permission_summary">Concedi l\'accesso a Gestisci archiviazione esterna prima di creare i backup. Il launcher aggiornerà automaticamente questa impostazione al tuo ritorno dalle Impostazioni.</string>
+    <string name="backup_grant_storage_permission">Concedi accesso spazio di archiviazione</string>
+    <string name="folder_icon_shape">Forma icona della cartella</string>
+    <string name="title_enable_folders">Abilita cartelle nel cassetto</string>
+    <string name="title_manage_folders">Gestisci cartelle</string>
+    <string name="summary_manage_folders">Crea o modifica cartelle</string>
+    <string name="title_general_folder">Cartella</string>
+    <string name="set_as_home_screen">Imposta come schermata Home</string>
+    <string name="default_home_screen">Schermata Home</string>
+    <string name="home_screen_set_toast">Impostazione schermata Home</string>
+    <string name="remove_page">Rimuovi pagina</string>
+    <string name="move_page_left">Sposta pagina a sinistra</string>
+    <string name="move_page_right">Sposta pagina a destra</string>
+    <string name="pref_title_folder">Personalizz cartelle</string>
+    <string name="pref_title_general">Generale</string>
+    <string name="permission_wallpaper_title">Accesso allo sfondo</string>
+    <string name="permission_wallpaper_message">Neo Launcher necessita dell\'accesso allo sfondo per applicare gli effetti di sfocatura. Senza questa autorizzazione, lo sfondo sfocato verrà disabilitato.</string>
+    <string name="permission_grant">Concedi</string>
+    <string name="title_dock_bottom_padding">Margine inferiore barra app</string>
 </resources>

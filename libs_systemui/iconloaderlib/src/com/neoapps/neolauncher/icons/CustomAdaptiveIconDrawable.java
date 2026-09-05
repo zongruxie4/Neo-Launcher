@@ -389,7 +389,7 @@ public class CustomAdaptiveIconDrawable extends AdaptiveIconDrawable implements 
         }
         if (mLayersShader == null) {
             mCanvas.setBitmap(mLayersBitmap);
-            mCanvas.drawColor(Color.BLACK);
+            mLayersBitmap.eraseColor(Color.TRANSPARENT);
             for (int i = 0; i < mLayerState.N_CHILDREN; i++) {
                 if (mLayerState.mChildren[i] == null) {
                     continue;

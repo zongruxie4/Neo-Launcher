@@ -43,6 +43,7 @@ import android.view.View;
 import android.view.animation.Interpolator;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.core.graphics.ColorUtils;
 
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.DeviceProfile;
@@ -51,7 +52,10 @@ import com.android.launcher3.R;
 import com.android.launcher3.celllayout.DelegatedCellDrawing;
 import com.android.launcher3.graphics.ShapeDelegate;
 import com.android.launcher3.graphics.ThemeManager;
+import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
+import com.neoapps.neolauncher.preferences.NeoPrefs;
+import com.neoapps.neolauncher.util.OmegaUtilsKt;
 
 /**
  * This object represents a FolderIcon preview background. It stores drawing / measurement
@@ -83,6 +87,7 @@ public class PreviewBackground extends DelegatedCellDrawing {
     private int mBgColor;
     private int mStrokeColor;
     private float mStrokeWidth;
+    private int mDotColor;
     private int mStrokeAlpha = MAX_BG_OPACITY;
     private int mShadowAlpha = 255;
     private View mInvalidateDelegate;
@@ -112,7 +117,6 @@ public class PreviewBackground extends DelegatedCellDrawing {
     @VisibleForTesting protected boolean mIsAccepting;
     @VisibleForTesting protected boolean mIsHovered;
     @VisibleForTesting protected boolean mIsHoveredOrAnimating;
-
     private static final Property<PreviewBackground, Integer> STROKE_ALPHA =
             new Property<PreviewBackground, Integer>(Integer.class, "strokeAlpha") {
                 @Override
@@ -141,8 +145,14 @@ public class PreviewBackground extends DelegatedCellDrawing {
                 }
             };
 
+    private boolean isInDrawer;
     public PreviewBackground(Context context) {
+        this(context, false);
+    }
+
+    public PreviewBackground(Context context, boolean inDrawer) {
         mContext = context;
+        isInDrawer = inDrawer;
     }
 
     /**
@@ -169,17 +179,22 @@ public class PreviewBackground extends DelegatedCellDrawing {
     public void setup(Context context, ActivityContext activity, View invalidateDelegate,
                       int availableSpaceX, int topPadding) {
         mInvalidateDelegate = invalidateDelegate;
+        NeoPrefs prefs = NeoPrefs.getInstance();
 
         TypedArray ta = context.getTheme().obtainStyledAttributes(R.styleable.FolderIconPreview);
         mStrokeColor = ta.getColor(R.styleable.FolderIconPreview_folderIconBorderColor, 0);
+        mDotColor = Themes.getAttrColor(context, R.attr.notificationDotColor);
         mBgColor = ta.getColor(R.styleable.FolderIconPreview_folderPreviewColor, 0);
+        mBgColor = ColorUtils.setAlphaComponent(mBgColor, OmegaUtilsKt.getFolderPreviewAlpha());
+
         ta.recycle();
 
         DeviceProfile grid = activity.getDeviceProfile();
-        previewSize = grid.folderIconSizePx;
+        previewSize = isInDrawer ? grid.getAllAppsProfile().getIconSizePx() - 10 : grid.folderIconSizePx;
 
         basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
-        basePreviewOffsetY = topPadding + grid.folderIconOffsetYPx;
+        basePreviewOffsetY = topPadding + (isInDrawer ? grid.allAppsFolderIconOffsetYPx : grid.folderIconOffsetYPx);
+
 
         // Stroke width is 1dp
         mStrokeWidth = context.getResources().getDisplayMetrics().density;
@@ -250,6 +265,10 @@ public class PreviewBackground extends DelegatedCellDrawing {
 
     public int getBgColor() {
         return mBgColor;
+    }
+
+    public int getDotColor() {
+        return mDotColor;
     }
 
     public void drawBackground(Canvas canvas) {
